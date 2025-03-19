@@ -1,12 +1,12 @@
 class Airfield {
     constructor(obj) {
-        this.numPlanes = obj.numPlanes ?? 10;
+        this.numAirCraft = obj.numAirCraft ?? 10;
         this.airFieldWidth = obj.airFieldWidth ?? 500;
         this.airFieldHeight = obj.airFieldHeight ?? 500;
         this.airFieldPosX =  obj.airFieldPosX ?? 250;
         this.airFieldPosY = obj.airFieldPosY ?? 250;
-        this.planes = [];
-        this.generatePlanes();
+        this.airCrafts = [];
+        this.generateAirCraft();
         
     }
     
@@ -18,49 +18,52 @@ class Airfield {
         pop()
     }
 
-    renderPlanes() {
+    renderAirCraft() {
         push();
         translate(this.airFieldPosX, this.airFieldPosY);
         fill(0,255,255)
-        this.planes.forEach((plane,id) => {
-            plane.renderPlane(id);
+        this.airCrafts.forEach((airCraft,id) => {
+            airCraft.renderAirCraft(id);
         })
         pop();
     }
 
-    checkPos() {
-        if (this.posX > this.airFieldWidth/2) {plane.posX = -this.airFieldWidth/2, plane.posY = map(plane.posY, 0 ,this.airFieldWidth,this.airFieldWidth,0)}
-        else if (plane.posX < -this.airFieldWidth/2) {plane.posX = this.airFieldWidth, plane.posY  = map(plane.posY,0,this.airFieldWidth,this.airFieldWidth,0)}
-    }
-
-    movePlanes() {
-        this.planes.forEach(plane => {
-            this.checkLimit(plane);
-            plane.move();
-            //plane.checkPos();
+    moveAirCraft() {
+        this.airCrafts.forEach(airCraft => {
+            this.checkLimit(airCraft);
+            airCraft.move();
         });
     }
 
-    generatePlanes() {
-        for(let i = 0; i < this.numPlanes; i++) {
-            this.planes.push(new Plane({
-            posX: random(0, this.airFieldWidth),
-            posY: random(0, this.airFieldHeight)
+    generateAirCraft() {
+        for(let i = 0; i < this.numAirCraft; i++) {
+            let gen = random(0,1)
+            if (gen < 0.5) {
+                 this.airCrafts.push(new AirCraft({
+            posx: random(0, this.airFieldWidth),
+            posy: random(0, this.airFieldHeight)
         }));
+            } else{
+                this.airCrafts.push(new Heli({
+                    posx: random(0, this.airFieldWidth),
+                    posy: random(0, this.airFieldHeight)
+                }));
+            }
+           
         }
     }
     
     checkDist() {
-        this.planes.forEach(plane => plane.alert = 0)
+        this.airCrafts.forEach(airCraft => airCraft.alert = 0)
         this.count = 0
-        for( let i = 0; i < this.planes.length; i++) {
-            for( let j = i+1; j < this.planes.length; j++) {
-                let planeA = this.planes[i];
-                let planeB = this.planes[j];
-                let dist = sqrt((sq(planeA.posX - planeB.posX)) + (sq(planeA.posY - planeB.posY)));
+        for( let i = 0; i < this.airCrafts.length; i++) {
+            for( let j = i+1; j < this.airCrafts.length; j++) {
+                let AirCraftA = this.airCrafts[i];
+                let AirCraftB = this.airCrafts[j];
+                let dist = sqrt((sq(AirCraftA.posx - AirCraftB.posx)) + (sq(AirCraftA.posy - AirCraftB.posy)));
                 if (dist < 50) {
-                    planeA.alert = 1;
-                    planeB.alert = 1;
+                    AirCraftA.alert = 1;
+                    AirCraftB.alert = 1;
                 }
                 //console.log(dist);
                 this.count++
@@ -70,26 +73,21 @@ class Airfield {
         
     }
 
-    checkLimit(plane) {
-        if (plane.posX > this.airFieldWidth) {
-            plane.posX = 0;
-            plane.posY = map(plane.posY, 0, this.airFieldHeight, this.airFieldHeight, 0)
-        } else if (plane.posX < 0) {
-            plane.posX = this.airFieldWidth
-            plane.posY = map(plane.posY, 0, this.airFieldHeight, this.airFieldHeight, 0)
+    checkLimit(airCraft) {
+        if (airCraft.pos.x > this.airFieldWidth) {
+            airCraft.pos.x = 0;
+            airCraft.posy = map(airCraft.posy, 0, this.airFieldHeight, this.airFieldHeight, 0)
+        } else if (airCraft.pos.x < 0) {
+            airCraft.pos.x = this.airFieldWidth
+            airCraft.posy = map(airCraft.posy, 0, this.airFieldHeight, this.airFieldHeight, 0)
         }
 
-        if (plane.posY > this.airFieldHeight) {
-            plane.posY = 0;
-            plane.posX = map(plane.posX, 0, this.airFieldWidth, this.airFieldWidth, 0)
-        } else if (plane.posY < 0) {
-            plane.posY = this.airFieldHeight
-            plane.posX = map(plane.posX, 0, this.airFieldWidth, this.airFieldWidth, 0)
+        if (airCraft.posy > this.airFieldHeight) {
+            airCraft.posy = 0;
+            airCraft.pos.x = map(airCraft.pos.x, 0, this.airFieldWidth, this.airFieldWidth, 0)
+        } else if (airCraft.posy < 0) {
+            airCraft.posy = this.airFieldHeight
+            airCraft.pos.x = map(airCraft.pos.x, 0, this.airFieldWidth, this.airFieldWidth, 0)
         }
     }
 }
-
-// function keyPressed() {
-// airFields[0].planes[key].velX *= 0.5;
-// console.log("Changed Velx of plane " + key)
-// }

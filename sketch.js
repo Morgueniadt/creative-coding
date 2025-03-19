@@ -1,12 +1,12 @@
 let airFields = [];
-let currentPlane = 0
+let currentAirCraft = 0
 
 function setup () {
     createCanvas(1000,1000);
     angleMode(DEGREES)
 
     airFields.push(new Airfield({
-        numPlanes: 1,
+        numAirCraft: 10,
         airFieldWidth: 1000,
         airFieldHeight: 1000,
         airFieldPosX: 0,
@@ -21,22 +21,21 @@ function draw() {
     background(100,225,100);
     for(let i = 0; i < airFields.length; i++) {
     airFields[i].renderAirfield();
-    airFields[i].renderPlanes();
-    airFields[i].checkPos();
-    airFields[i].movePlanes();
+    airFields[i].renderAirCraft();
+    airFields[i].moveAirCraft();
     airFields[i].checkDist();
     }
     if (keyIsDown(65)){
-        airFields[0].planes[0].turnLeft()
+        airFields[0].airCrafts[0].turnLeft()
     }
     if (keyIsDown(68)) {
-        airFields[0].planes[0].turnRight()
+        airFields[0].airCrafts[0].turnRight()
     }
     if (keyIsDown(87)) {
-        airFields[0].planes[0].increaseSpeed()
+        airFields[0].airCrafts[0].increaseSpeed()
     }
     if (keyIsDown(83)) {
-        airFields[0].planes[0].decreaseSpeed()
+        airFields[0].airCrafts[0].decreaseSpeed()
     }
 
 
@@ -45,16 +44,16 @@ function draw() {
 // function keyPressed() {
 
 //     if (key === "A") {
-//         airFields[0].planes[0].turnLeft()
+//         airFields[0].airCrafts[0].turnLeft()
 //     }
 //     if (key === "D") {
-//         airFields[0].planes[0].turnRight()
+//         airFields[0].airCrafts[0].turnRight()
 //     }
 //     if (key === "W") {
-//         airFields[0].planes[0].increaseSpeed()
+//         airFields[0].airCrafts[0].increaseSpeed()
 //     }
 //     if (key === "S") {
-//         airFields[0].planes[0].decreaseSpeed()
+//         airFields[0].airCrafts[0].decreaseSpeed()
 //     }
 
 
