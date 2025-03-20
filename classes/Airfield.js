@@ -53,22 +53,26 @@ class Airfield {
         }
     }
     
-    checkDist() {
-        this.airCrafts.forEach(airCraft => airCraft.alert = 0)
-        this.count = 0
-        for( let i = 0; i < this.airCrafts.length; i++) {
-            for( let j = i+1; j < this.airCrafts.length; j++) {
-                let AirCraftA = this.airCrafts[i];
-                let AirCraftB = this.airCrafts[j];
-                let dist = sqrt((sq(AirCraftA.posx - AirCraftB.posx)) + (sq(AirCraftA.posy - AirCraftB.posy)));
-                if (dist < 50) {
-                    AirCraftA.alert = 1;
-                    AirCraftB.alert = 1;
-                }
-                //console.log(dist);
-                this.count++
+checkDist() {
+    this.airCrafts.forEach(airCraft => airCraft.alert = 0); // Reset alerts before checking
+
+    for (let i = 0; i < this.airCrafts.length; i++) {
+        for (let j = i + 1; j < this.airCrafts.length; j++) {
+            let AirCraftA = this.airCrafts[i];
+            let AirCraftB = this.airCrafts[j];
+
+            // Calculate the Euclidean distance between aircraft
+            let distBetween = dist(AirCraftA.pos.x, AirCraftA.pos.y, AirCraftB.pos.x, AirCraftB.pos.y);
+
+            // Collision alert threshold (adjustable)
+            let minSafeDist = (AirCraftA.apWidth + AirCraftB.apWidth) / 2 + 10; // Buffer of 10
+
+            if (distBetween < minSafeDist) {
+                AirCraftA.alert = 1;
+                AirCraftB.alert = 1;
             }
         }
+    }
         //console.log(this.count)
         
     }

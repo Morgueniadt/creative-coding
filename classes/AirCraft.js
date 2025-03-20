@@ -3,7 +3,7 @@ class AirCraft {
         this.pos = createVector(obj.posx ?? random(0,500), obj.posy ?? random(0,500));
         this.apHeight = obj.apHeight ?? 15;
         this.apWidth = obj.apWidth ?? 20;
-        this.alert = 0;
+        this.alert = 1;
         this.speed = obj.speed ?? random(0.2, 2);
         this.angle = obj.angle ?? random(0, 360);
         this.vel = createVector(this.speed * cos(this.angle), this.speed * sin(this.angle));
