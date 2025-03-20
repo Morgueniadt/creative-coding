@@ -3,10 +3,11 @@ class AirCraft {
         this.pos = createVector(obj.posx ?? random(0, 500), obj.posy ?? random(0, 500));
         this.apHeight = obj.apHeight ?? 15;
         this.apWidth = obj.apWidth ?? 20;
-        this.alert = 1;
+        this.alert = 0;
         this.speed = obj.speed ?? random(0.2, 2);
         this.angle = obj.angle ?? random(0, 360);
         this.vel = createVector(this.speed * cos(this.angle), this.speed * sin(this.angle));
+        this.lasers = []; // Array to store lasers fired by this aircraft
     }
 
     renderAirCraft(id) {
@@ -15,13 +16,7 @@ class AirCraft {
         textSize(15);
         text(id, 20, -5);
         rotate(this.angle);
-        noFill();
-        stroke(255);
-        beginShape();
-        vertex(0, -this.apHeight / 2);
-        vertex(-this.apWidth / 2, this.apHeight / 2);
-        vertex(this.apWidth / 2, this.apHeight / 2);
-        endShape(CLOSE);
+        ellipse(0, 0, this.apWidth, this.apHeight);
 
         if (this.alert === 1) {
             noFill();
@@ -30,6 +25,18 @@ class AirCraft {
             ellipse(0, 0, this.apHeight * 2);
         }
         pop();
+    }
+
+    fireLaser() {
+        // Only this aircraft can fire lasers
+        this.lasers.push(new Laser(this.pos.x, this.pos.y, this.angle));
+    }
+
+    renderLasers() {
+        for (let laser of this.lasers) {
+            laser.move();
+            laser.render();
+        }
     }
 
     move() {
@@ -61,11 +68,5 @@ class AirCraft {
     turnRight() {
         this.angle += 2;
         this.updateVel();
-    }
-    fireLaser() {
-        if (airFields[0].lasers.length > 5 ) {
-        let laser = new Laser(this.pos.x, this.pos.y, this.angle);
-        airFields[0].lasers.push(laser);
-        }
     }
 }

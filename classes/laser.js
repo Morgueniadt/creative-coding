@@ -1,8 +1,8 @@
 class Laser {
     constructor(x, y, angle) {
         this.pos = createVector(x, y);
-        this.vel = createVector(5 * cos(angle), 5 * sin(angle)); // Move laser based on angle
-        this.size = 5;
+        this.vel = createVector(5 * cos(angle), 5 * sin(angle)); // Adjust speed if needed
+        this.size = 10;
     }
 
     move() {

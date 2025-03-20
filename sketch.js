@@ -16,14 +16,21 @@ function setup() {
 
 function draw() {
     background(100, 225, 100);
-    
+
     for (let i = 0; i < airFields.length; i++) {
         airFields[i].renderAirfield();
         airFields[i].renderAirCraft();
         airFields[i].moveAirCraft();
         airFields[i].checkDist();
         airFields[i].renderLasers();
+
+           // Check for laser collisions with asteroids
+           for (let laser of airFields[i].lasers) {
+            for (let asteroid of airFields[i].airCrafts) {
+                if (asteroid instanceof Asteroid && asteroid.checkCollision(laser)) {
+                    // Handle the laser-asteroid collision (like destroy asteroid)
     }
+            }
 
     // Display Lives and Alert Count in the top left corner
     displayStats();
@@ -40,11 +47,11 @@ function draw() {
     if (keyIsDown(83)) {
         airFields[0].airCrafts[0].decreaseSpeed();
     }
-        // Fire laser when spacebar is pressed
-        if (keyIsDown(32)) {
-            airFields[0].airCrafts[0].fireLaser();
-        }
-    
+    // Fire laser when spacebar is pressed
+    if (keyIsPressed && key === ' ') {
+        airFields[0].airCrafts[0].fireLaser();
+    }
+}
 }
 
 function displayStats() {
@@ -53,4 +60,4 @@ function displayStats() {
     text("Lives: " + airFields[0].lives, 10, 30);
     text("Alert Count: " + airFields[0].alertCount, 10, 60);
 }
-
+}
