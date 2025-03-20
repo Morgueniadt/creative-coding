@@ -39,14 +39,23 @@ class Airfield {
 
     generateAirCraft() {
         for (let i = 0; i < this.numAirCraft; i++) {
-            // Create asteroids instead of helicopters
-            this.airCrafts.push(new Asteroid({
-                posx: random(0, this.airFieldWidth),
-                posy: random(0, this.airFieldHeight),
-                size: random(30, 60),
-                speed: random(1, 3),
-                angle: random(0, 360)
-            }));
+            if (random() < 0.5) {  // Randomly choose between Asteroid or AirCraft
+                this.airCrafts.push(new Asteroid({
+                    posx: random(0, this.airFieldWidth),
+                    posy: random(0, this.airFieldHeight),
+                    size: random(30, 60),
+                    speed: random(1, 3),
+                    angle: random(0, 360)
+                }));
+            } else {
+                this.airCrafts.push(new AirCraft({
+                    posx: random(0, this.airFieldWidth),
+                    posy: random(0, this.airFieldHeight),
+                    size: random(30, 60),
+                    speed: random(1, 3),
+                    angle: random(0, 360)
+                }));
+            }
         }
     }
 
