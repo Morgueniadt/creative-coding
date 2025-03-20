@@ -22,6 +22,7 @@ function draw() {
         airFields[i].renderAirCraft();
         airFields[i].moveAirCraft();
         airFields[i].checkDist();
+        airFields[i].renderLasers();
     }
 
     // Display Lives and Alert Count in the top left corner
@@ -39,6 +40,11 @@ function draw() {
     if (keyIsDown(83)) {
         airFields[0].airCrafts[0].decreaseSpeed();
     }
+        // Fire laser when spacebar is pressed
+        if (keyIsDown(32)) {
+            airFields[0].airCrafts[0].fireLaser();
+        }
+    
 }
 
 function displayStats() {

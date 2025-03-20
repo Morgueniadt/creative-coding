@@ -8,6 +8,7 @@ class Airfield {
         this.airCrafts = [];
         this.lives = 3;  // Starting lives
         this.alertCount = 0;  // Starting alert counter
+        this.lasers = [];
         this.generateAirCraft();
     }
 
@@ -54,6 +55,7 @@ class Airfield {
     }
 
     checkDist() {
+        let alertTriggered = false;  // Flag to track if an alert was triggered
         this.airCrafts.forEach(airCraft => airCraft.alert = 0);
         this.count = 0;
         for (let i = 0; i < this.airCrafts.length; i++) {
@@ -65,6 +67,7 @@ class Airfield {
                     AirCraftA.alert = 1;
                     AirCraftB.alert = 1;
                     this.alertCount++;  // Increment the alert counter
+                    alertTriggered = true;  // Set flag to true to prevent multiple alert counts for the same event
                 }
                 this.count++;
             }
@@ -85,4 +88,23 @@ class Airfield {
         }
     }
     
+
+    renderLasers() {
+        for (let i = 0; i < this.lasers.length; i++) {
+            let laser = this.lasers[i];
+            laser.move();
+            laser.render();
+            // Check if laser hits any other aircraft
+            for (let j = 0; j < this.airCrafts.length; j++) {
+                let aircraft = this.airCrafts[j];
+                let dist = sqrt(sq(laser.pos.x - aircraft.pos.x) + sq(laser.pos.y - aircraft.pos.y));
+                if (dist < aircraft.apHeight / 2) {
+                    // Destroy aircraft if laser hits
+                    this.airCrafts.splice(j, 1);  // Remove aircraft from array
+                    this.lasers.splice(i, 1);  // Remove laser
+                    break;
+                }
+            }
+        }
+    }
 }

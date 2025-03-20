@@ -62,4 +62,10 @@ class AirCraft {
         this.angle += 2;
         this.updateVel();
     }
+    fireLaser() {
+        if (airFields[0].lasers.length > 5 ) {
+        let laser = new Laser(this.pos.x, this.pos.y, this.angle);
+        airFields[0].lasers.push(laser);
+        }
+    }
 }
