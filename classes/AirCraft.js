@@ -1,6 +1,6 @@
 class AirCraft {
     constructor(obj) {
-        this.pos = createVector(obj.posx ?? random(0,500), obj.posy ?? random(0,500));
+        this.pos = createVector(obj.posx ?? random(0, 500), obj.posy ?? random(0, 500));
         this.apHeight = obj.apHeight ?? 15;
         this.apWidth = obj.apWidth ?? 20;
         this.alert = 1;
@@ -15,7 +15,13 @@ class AirCraft {
         textSize(15);
         text(id, 20, -5);
         rotate(this.angle);
-        ellipse(0, 0, this.apWidth, this.apHeight);
+        noFill();
+        stroke(255);
+        beginShape();
+        vertex(0, -this.apHeight / 2);
+        vertex(-this.apWidth / 2, this.apHeight / 2);
+        vertex(this.apWidth / 2, this.apHeight / 2);
+        endShape(CLOSE);
 
         if (this.alert === 1) {
             noFill();
