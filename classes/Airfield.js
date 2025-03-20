@@ -74,20 +74,17 @@ class Airfield {
     }
 
     checkLimit(airCraft) {
-        if (airCraft.pos.x > this.airFieldWidth) {
-            airCraft.pos.x = 0;
-            airCraft.posy = map(airCraft.posy, 0, this.airFieldHeight, this.airFieldHeight, 0)
-        } else if (airCraft.pos.x < 0) {
-            airCraft.pos.x = this.airFieldWidth
-            airCraft.posy = map(airCraft.posy, 0, this.airFieldHeight, this.airFieldHeight, 0)
-        }
-
-        if (airCraft.posy > this.airFieldHeight) {
-            airCraft.posy = 0;
-            airCraft.pos.x = map(airCraft.pos.x, 0, this.airFieldWidth, this.airFieldWidth, 0)
-        } else if (airCraft.posy < 0) {
-            airCraft.posy = this.airFieldHeight
-            airCraft.pos.x = map(airCraft.pos.x, 0, this.airFieldWidth, this.airFieldWidth, 0)
-        }
+    if (airCraft.pos.x > this.airFieldWidth) {
+        airCraft.pos.x = 0;
+    } else if (airCraft.pos.x < 0) {
+        airCraft.pos.x = this.airFieldWidth;
     }
+
+    if (airCraft.pos.y > this.airFieldHeight) {
+        airCraft.pos.y = 0;
+    } else if (airCraft.pos.y < 0) {
+        airCraft.pos.y = this.airFieldHeight;
+    }
+}
+
 }
