@@ -6,7 +6,8 @@ function setup() {
     angleMode(DEGREES);
 
     airFields.push(new Airfield({
-        numAirCraft: 10,
+        numAirCraft: 1,
+        numAsteroids: 10,
         airFieldWidth: 1000,
         airFieldHeight: 1000,
         airFieldPosX: 0,
@@ -56,8 +57,7 @@ function displayStats() {
     fill(255);
     textSize(18);
     text("Lives: " + airFields[0].lives, 10, 30);
-    text("Alert Count: " + airFields[0].alertCount, 10, 60);
-}
+    text("Score: " + airFields[0].score, 10, 60);}
 
 function keyPressed() {
 

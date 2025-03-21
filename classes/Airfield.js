@@ -6,9 +6,11 @@ class Airfield {
         this.airFieldPosX = obj.airFieldPosX ?? 250;
         this.airFieldPosY = obj.airFieldPosY ?? 250;
         this.airCrafts = [];
-        this.lasers = [];  // Array to store lasers
-        this.lives = 3;  // Lives for the player
-        this.alertCount = 0;  // Counter for how many times alerts have been triggered
+        this.lasers = [];
+        this.lives = 3;
+        this.alertCount = 0;
+        this.score = 0;
+
         this.generateAirCraft();
     }
 
@@ -37,43 +39,50 @@ class Airfield {
         });
     }
 
+    generateAsteroids() {
+        for (let i = 0; i < this.numAirCraft; i++) {
+            this.airCrafts.push(new Asteroid({
+                posx: random(0, this.airFieldWidth),
+                posy: random(0, this.airFieldHeight),
+                size: random(30, 60),
+                speed: random(1, 3),
+                angle: random(0, 360)
+            }));
+        }
+    }
+
     generateAirCraft() {
         for (let i = 0; i < this.numAirCraft; i++) {
-            if (random() < 0.5) {  // Randomly choose between Asteroid or AirCraft
-                this.airCrafts.push(new Asteroid({
-                    posx: random(0, this.airFieldWidth),
-                    posy: random(0, this.airFieldHeight),
-                    size: random(30, 60),
-                    speed: random(1, 3),
-                    angle: random(0, 360)
-                }));
-            } else {
-                this.airCrafts.push(new AirCraft({
-                    posx: random(0, this.airFieldWidth),
-                    posy: random(0, this.airFieldHeight),
-                    size: random(30, 60),
-                    speed: random(1, 3),
-                    angle: random(0, 360)
-                }));
-            }
+            this.airCrafts.push(new AirCraft({
+                posx: random(0, this.airFieldWidth),
+                posy: random(0, this.airFieldHeight),
+                size: random(30, 60),
+                speed: random(1, 3),
+                angle: random(0, 360)
+            }));
         }
     }
 
     checkDist() {
         this.airCrafts.forEach(airCraft => airCraft.alert = 0);
-        this.count = 0;
+        let alertTriggered = false;
+
         for (let i = 0; i < this.airCrafts.length; i++) {
             for (let j = i + 1; j < this.airCrafts.length; j++) {
                 let AirCraftA = this.airCrafts[i];
                 let AirCraftB = this.airCrafts[j];
                 let dist = sqrt((sq(AirCraftA.pos.x - AirCraftB.pos.x)) + (sq(AirCraftA.pos.y - AirCraftB.pos.y)));
+
                 if (dist < 50) {
                     AirCraftA.alert = 1;
                     AirCraftB.alert = 1;
-                    this.alertCount+=-1; // Increase alert count when an alert is triggered
+                    alertTriggered = true;
                 }
-                this.count++;
             }
+        }
+
+        if (alertTriggered) {
+            this.alertCount++;
         }
     }
 
@@ -91,7 +100,6 @@ class Airfield {
         }
     }
 
-    // Handle laser creation and movement
     createLaser(airCraft) {
         let laser = new Laser({
             posx: airCraft.pos.x,
@@ -102,20 +110,21 @@ class Airfield {
     }
 
     renderLasers() {
-        for (let i = 0; i < this.lasers.length; i++) {
+        for (let i = this.lasers.length - 1; i >= 0; i--) {
             let laser = this.lasers[i];
             laser.move();
             laser.render();
-            // Check if laser hits any other aircraft
-            for (let j = 0; j < this.airCrafts.length; j++) {
+
+            for (let j = this.airCrafts.length - 1; j >= 0; j--) {
                 let aircraft = this.airCrafts[j];
                 let dist = sqrt(sq(laser.pos.x - aircraft.pos.x) + sq(laser.pos.y - aircraft.pos.y));
-                if (dist < aircraft.size / 2) {  // Use size of the aircraft to check collision
+
+                if (dist < aircraft.size / 2) {
                     if (aircraft instanceof Asteroid) {
-                        // Destroy asteroid and spawn smaller pieces
                         aircraft.breakApart();
+                        this.score++;
                     }
-                    // Remove aircraft and laser on collision
+
                     this.airCrafts.splice(j, 1);
                     this.lasers.splice(i, 1);
                     break;
