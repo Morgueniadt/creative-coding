@@ -35,22 +35,7 @@ class Asteroid extends AirCraft {
         }
     }
 
-    breakApart() {
-        if (this.isDestroyed) return;  // Don't break apart if already destroyed
 
-        // Generate pieces when the asteroid breaks
-        for (let i = 0; i < 3; i++) {  // Create 3 smaller pieces
-            let newPiece = new AsteroidPiece({
-                posx: this.pos.x,
-                posy: this.pos.y,
-                size: this.size / 2,
-                speed: random(1, 2),
-                angle: random(0, 360)
-            });
-            this.pieces.push(newPiece);
-        }
-        this.isDestroyed = true;  // Mark the asteroid as destroyed
-    }
 
     move() {
         if (!this.isDestroyed) {

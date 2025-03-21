@@ -70,7 +70,7 @@ class Airfield {
                 if (dist < 50) {
                     AirCraftA.alert = 1;
                     AirCraftB.alert = 1;
-                    this.alertCount++; // Increase alert count when an alert is triggered
+                    this.alertCount+=-1; // Increase alert count when an alert is triggered
                 }
                 this.count++;
             }
