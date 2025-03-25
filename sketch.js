@@ -2,11 +2,21 @@ var aircraft;
 var asteroids = [];
 var lasers = [];
 var stats;
+var gameOver = false; // Track if the game is over
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  startGame(); // Start the game
+}
+
+function startGame() {
   aircraft = new AirCraft();
   stats = new Stats(); // Create the Stats instance
+  asteroids = []; // Clear existing asteroids
+  lasers = []; // Clear lasers
+  gameOver = false; // Reset the game over flag
+
+  // Add initial asteroids
   for (var i = 0; i < 5; i++) {
     asteroids.push(new Asteroid());
   }
@@ -15,24 +25,23 @@ function setup() {
 function draw() {
   background(0);
 
-  // Check if the game is over
-  if (stats.health <= 0) {
+  // If the game is over, display the Game Over message
+  if (gameOver) {
     displayGameOver();
-    noLoop(); // Stop the game loop
-    return;
+    return; // Stop the game loop
   }
 
   // Loop through all asteroids and check for collisions with the aircraft
   for (var i = 0; i < asteroids.length; i++) {
-    // Check if the asteroid collides with the aircraft
     if (aircraft.hits(asteroids[i])) {
       stats.health -= 10; // Decrease health if aircraft hits an asteroid
-      console.log('Ship hit an asteroid! Health:', stats.health);
+      console.log('Aircraft hit an asteroid! Health:', stats.health);
 
       // If health is zero or below, stop the game
       if (stats.health <= 0) {
-        console.log("Game Over");
+        gameOver = true; // Set the game over flag
         noLoop(); // Stop the game loop
+        break; // Exit the loop early
       }
 
       // Break the asteroid into smaller pieces
@@ -77,7 +86,7 @@ function draw() {
   stats.render(); // Render stats on the screen
 }
 
-// Function to display a Game Over message
+// Function to display a Game Over message and prompt to try again
 function displayGameOver() {
   push();
   fill(255, 0, 0); // Red color for Game Over text
@@ -85,7 +94,7 @@ function displayGameOver() {
   textAlign(CENTER, CENTER);
   text("GAME OVER", width / 2, height / 2 - 50);
   textSize(24);
-  text("Press F5 to Restart", width / 2, height / 2 + 20);
+  text("Press ENTER to Try Again", width / 2, height / 2 + 20);
   pop();
 }
 
@@ -96,18 +105,23 @@ function calculateAccuracy(totalShots) {
 }
 
 function keyReleased() {
-  aircraft.setRotation(0);
-  aircraft.boosting(false);
+  if (!gameOver) {
+    aircraft.setRotation(0);
+    aircraft.boosting(false);
+  }
 }
 
 function keyPressed() {
-  if (key == ' ') {
+  if (key == ' ' && !gameOver) {
     lasers.push(new Laser(aircraft.pos, aircraft.heading));
-  } else if (keyCode == RIGHT_ARROW) {
+  } else if (keyCode == RIGHT_ARROW && !gameOver) {
     aircraft.setRotation(0.1);
-  } else if (keyCode == LEFT_ARROW) {
+  } else if (keyCode == LEFT_ARROW && !gameOver) {
     aircraft.setRotation(-0.1);
-  } else if (keyCode == UP_ARROW) {
+  } else if (keyCode == UP_ARROW && !gameOver) {
     aircraft.boosting(true);
+  } else if (keyCode === ENTER && gameOver) {
+    startGame(); // Restart the game when ENTER is pressed
+    loop(); // Restart the game loop
   }
 }
