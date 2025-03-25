@@ -1,72 +1,70 @@
+// Daniel Shiffman
+// http://codingtra.in
+// http://patreon.com/codingtrain
+// Code for: https://youtu.be/hacZU523FyM
+
 class AirCraft {
-    constructor(obj) {
-        this.pos = createVector(obj.posx ?? random(0, 500), obj.posy ?? random(0, 500));
-        this.apHeight = obj.apHeight ?? 15;
-        this.apWidth = obj.apWidth ?? 20;
-        this.alert = 0;
-        this.speed = obj.speed ?? random(0.2, 2);
-        this.angle = obj.angle ?? random(0, 360);
-        this.vel = createVector(this.speed * cos(this.angle), this.speed * sin(this.angle));
-        this.lasers = [];
+    constructor() {
+      this.pos = createVector(width / 2, height / 2);
+      this.r = 20;
+      this.heading = 0;
+      this.rotation = 0;
+      this.vel = createVector(0, 0);
+      this.isBoosting = false;
     }
-
-    renderAirCraft(id) {
-        push();
-        translate(this.pos.x, this.pos.y);
-        textSize(15);
-        text(id, 20, -5);
-        rotate(this.angle);
-        ellipse(0, 0, this.apWidth, this.apHeight);
-
-        if (this.alert === 1) {
-            noFill();
-            stroke(255, 0, 0);
-            strokeWeight(2);
-            ellipse(0, 0, this.apHeight * 2);
-        }
-        pop();
+  
+    boosting(b) {
+      this.isBoosting = b;
     }
-
-    fireLaser() {
-        // Only this aircraft can fire lasers
-        this.lasers.push(new Laser(this.pos.x, this.pos.y, this.angle));
+  
+    update() {
+      if (this.isBoosting) {
+        this.boost();
+      }
+      this.pos.add(this.vel);
+      this.vel.mult(0.99);
     }
-
-    renderLasers() {
-        for (let laser of this.lasers) {
-            laser.move();
-            laser.render();
-        }
+  
+    boost() {
+      let force = p5.Vector.fromAngle(this.heading);
+      force.mult(0.1);
+      this.vel.add(force);
     }
-
-    move() {
-        this.pos.x += this.vel.x;
-        this.pos.y += this.vel.y;
+  
+    hits(asteroid) {
+      let d = dist(this.pos.x, this.pos.y, asteroid.pos.x, asteroid.pos.y);
+      return d < this.r + asteroid.r;
     }
-
-    updateVel() {
-        this.vel.x = this.speed * cos(this.angle);
-        this.vel.y = this.speed * sin(this.angle);
+  
+    render() {
+      push();
+      translate(this.pos.x, this.pos.y);
+      rotate(this.heading + PI / 2);
+      fill(0);
+      stroke(255);
+      triangle(-this.r, this.r, this.r, this.r, 0, -this.r);
+      pop();
     }
-
-    increaseSpeed() {
-        this.speed += 0.3;
-        this.updateVel();
+  
+    edges() {
+      if (this.pos.x > width + this.r) {
+        this.pos.x = -this.r;
+      } else if (this.pos.x < -this.r) {
+        this.pos.x = width + this.r;
+      }
+      if (this.pos.y > height + this.r) {
+        this.pos.y = -this.r;
+      } else if (this.pos.y < -this.r) {
+        this.pos.y = height + this.r;
+      }
     }
-
-    decreaseSpeed() {
-        this.speed -= 0.3;
-        this.updateVel();
-        if (this.speed < 0.2) this.speed = 0;
+  
+    setRotation(a) {
+      this.rotation = a;
     }
-
-    turnLeft() {
-        this.angle -= 2;
-        this.updateVel();
+  
+    turn() {
+      this.heading += this.rotation;
     }
-
-    turnRight() {
-        this.angle += 2;
-        this.updateVel();
-    }
-}
+  }
+  

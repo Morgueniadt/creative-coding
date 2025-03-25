@@ -1,3 +1,8 @@
+// Daniel Shiffman
+// http://codingtra.in
+// http://patreon.com/codingtrain
+// Code for: https://youtu.be/hacZU523FyM
+
 class Asteroid {
     constructor(pos, r) {
       if (pos) {
@@ -5,7 +10,7 @@ class Asteroid {
       } else {
         this.pos = createVector(random(width), random(height));
       }
-  
+      
       if (r) {
         this.r = r * 0.5;
       } else {
@@ -15,6 +20,7 @@ class Asteroid {
       this.vel = p5.Vector.random2D();
       this.total = floor(random(5, 15));
       this.offset = [];
+      
       for (let i = 0; i < this.total; i++) {
         this.offset[i] = random(-this.r * 0.5, this.r * 0.5);
       }
@@ -29,6 +35,8 @@ class Asteroid {
       stroke(255);
       noFill();
       translate(this.pos.x, this.pos.y);
+      
+      // Draw asteroid shape
       beginShape();
       for (let i = 0; i < this.total; i++) {
         let angle = map(i, 0, this.total, 0, TWO_PI);
@@ -54,6 +62,7 @@ class Asteroid {
       } else if (this.pos.x < -this.r) {
         this.pos.x = width + this.r;
       }
+      
       if (this.pos.y > height + this.r) {
         this.pos.y = -this.r;
       } else if (this.pos.y < -this.r) {
