@@ -25,17 +25,7 @@ function draw() {
         airFields[i].checkDist();
         airFields[i].renderLasers();
 
-        for (let laser of airFields[i].lasers) {
-            for (let asteroid of airFields[i].airCrafts) {
-                if (asteroid instanceof Asteroid && asteroid.checkCollision(laser)) {
-                    asteroid.breakApart();
-                    let laserIndex = airFields[i].lasers.indexOf(laser);
-                    if (laserIndex > -1) {
-                        airFields[i].lasers.splice(laserIndex, 1);
-                    }
-                }
-            }
-        }
+
 
         displayStats();
     }    if (keyIsDown(65)) {
@@ -61,8 +51,8 @@ function displayStats() {
 
 function keyPressed() {
 
-    if (keyIsPressed && key === ' ') {
+    if (keyCode === 32) {
         airFields[0].airCrafts[0].fireLaser();
         console.log("Firing Laser!");
-    }
+}
 }

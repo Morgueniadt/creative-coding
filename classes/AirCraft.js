@@ -7,7 +7,7 @@ class AirCraft {
         this.speed = obj.speed ?? random(0.2, 2);
         this.angle = obj.angle ?? random(0, 360);
         this.vel = createVector(this.speed * cos(this.angle), this.speed * sin(this.angle));
-        this.lasers = []; // Array to store lasers fired by this aircraft
+        this.lasers = [];
     }
 
     renderAirCraft(id) {

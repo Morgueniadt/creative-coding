@@ -1,55 +1,64 @@
-class Asteroid extends AirCraft {
-    constructor(obj) {
-        super(obj);
-        this.size = obj.size ?? random(30, 60);  // Initial size of the asteroid
-        this.speed = obj.speed ?? random(1, 3); // Speed of asteroid
-        this.pieces = [];  // Array to store pieces when asteroid breaks
-        this.isDestroyed = false;  // Flag to check if asteroid is destroyed
-        this.angle = obj.angle ?? random(0, 360); // Angle of movement
+class Asteroid {
+    constructor(pos, r) {
+      if (pos) {
+        this.pos = pos.copy();
+      } else {
+        this.pos = createVector(random(width), random(height));
+      }
+  
+      if (r) {
+        this.r = r * 0.5;
+      } else {
+        this.r = random(15, 50);
+      }
+  
+      this.vel = p5.Vector.random2D();
+      this.total = floor(random(5, 15));
+      this.offset = [];
+      for (let i = 0; i < this.total; i++) {
+        this.offset[i] = random(-this.r * 0.5, this.r * 0.5);
+      }
     }
-
-    renderAirCraft(id) {
-        if (this.isDestroyed) {
-            // If destroyed, render its pieces instead
-            this.renderPieces();
-            return;
-        }
-
-        push();
-        translate(this.pos.x, this.pos.y);
-        textSize(15);
-        text(id, 20, -5);
-        rotate(this.angle);
-
-        // Render as a simple ellipse (can change to any shape)
-        ellipse(0, 0, this.size, this.size);
-        pop();
+  
+    update() {
+      this.pos.add(this.vel);
     }
-
-    renderPieces() {
-        // Render the smaller pieces after the asteroid breaks
-        for (let i = 0; i < this.pieces.length; i++) {
-            let piece = this.pieces[i];
-            piece.move();
-            piece.render();
-        }
+  
+    render() {
+      push();
+      stroke(255);
+      noFill();
+      translate(this.pos.x, this.pos.y);
+      beginShape();
+      for (let i = 0; i < this.total; i++) {
+        let angle = map(i, 0, this.total, 0, TWO_PI);
+        let r = this.r + this.offset[i];
+        let x = r * cos(angle);
+        let y = r * sin(angle);
+        vertex(x, y);
+      }
+      endShape(CLOSE);
+      pop();
     }
-
-
-
-    move() {
-        if (!this.isDestroyed) {
-            this.pos.x += this.speed * cos(this.angle);
-            this.pos.y += this.speed * sin(this.angle);
-        }
+  
+    breakup() {
+      let newA = [];
+      newA[0] = new Asteroid(this.pos, this.r);
+      newA[1] = new Asteroid(this.pos, this.r);
+      return newA;
     }
-
-    // Check collision with lasers (or any other object)
-    checkCollision(laser) {
-        if (dist(this.pos.x, this.pos.y, laser.pos.x, laser.pos.y) < this.size / 2) {
-            this.breakApart();
-            return true;  // Collision detected
-        }
-        return false;
+  
+    edges() {
+      if (this.pos.x > width + this.r) {
+        this.pos.x = -this.r;
+      } else if (this.pos.x < -this.r) {
+        this.pos.x = width + this.r;
+      }
+      if (this.pos.y > height + this.r) {
+        this.pos.y = -this.r;
+      } else if (this.pos.y < -this.r) {
+        this.pos.y = height + this.r;
+      }
     }
-}
+  }
+  

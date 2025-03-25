@@ -1,20 +1,39 @@
 class Laser {
-    constructor(x, y, angle) {
-        this.pos = createVector(x, y);
-        this.vel = createVector(5 * cos(angle), 5 * sin(angle)); // Adjust speed if needed
-        this.size = 10;
+    constructor(spos, angle) {
+      this.pos = createVector(spos.x, spos.y);
+      this.vel = p5.Vector.fromAngle(angle);
+      this.vel.mult(10);
     }
-
-    move() {
-        this.pos.add(this.vel);
+  
+    update() {
+      this.pos.add(this.vel);
     }
-
+  
     render() {
-        push();
-        translate(this.pos.x, this.pos.y);
-        fill(255, 0, 0);
-        noStroke();
-        ellipse(0, 0, this.size);
-        pop();
+      push();
+      stroke(255);
+      strokeWeight(4);
+      point(this.pos.x, this.pos.y);
+      pop();
     }
-}
+  
+    hits(asteroid) {
+      let d = dist(this.pos.x, this.pos.y, asteroid.pos.x, asteroid.pos.y);
+      if (d < asteroid.r) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  
+    offscreen() {
+      if (this.pos.x > width || this.pos.x < 0) {
+        return true;
+      }
+      if (this.pos.y > height || this.pos.y < 0) {
+        return true;
+      }
+      return false;
+    }
+  }
+  
