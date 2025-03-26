@@ -20,9 +20,10 @@ class Stats {
     textAlign(LEFT, TOP);
 
     // Display health, accuracy, and score
-    text(`Health: ${this.health}`, 10, 10);
-    text(`Accuracy: ${this.accuracy.toFixed(2)}%`, 10, 30);
-    text(`Score: ${this.score}`, 10, 50);
+    text("Health: " + this.health, 10, 10);
+    text("Accuracy: " + this.accuracy.toFixed(2) + "%", 10, 30);
+    text("Score: " + this.score, 10, 50);
+    
 
     pop();
   }
