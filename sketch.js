@@ -89,7 +89,7 @@ function draw() {
 // Function to display a Game Over message and prompt to try again
 function displayGameOver() {
   push();
-  fill(255, 0, 0); // Red color for Game Over text
+  fill(255); 
   textSize(48);
   textAlign(CENTER, CENTER);
   text("GAME OVER", width / 2, height / 2 - 50);
