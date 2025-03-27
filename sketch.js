@@ -114,7 +114,8 @@ function draw() {
 function keyReleased() {
   if (keyCode == RIGHT_ARROW || keyCode == LEFT_ARROW) {
     aircraft.setRotation(0); // Stop rotation when no key is pressed
-  }
+  }else if (keycode == UP_ARROW)
+    aircraft.boosting(flase); // when the front button is let go the ship halts boosting 
 }
 // Function to restart the game when ENTER is pressed
 function keyPressed() {
