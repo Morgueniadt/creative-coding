@@ -107,7 +107,7 @@ function draw() {
   aircraft.edges();
 
   // Update stats with the current values
-  stats.update(stats.accuracy, stats.score, stats.health);
+  stats.update(stats.score, stats.health);
   stats.render();
 }
 
@@ -124,10 +124,7 @@ function displayGameOver() {
 }
 
 // Function to calculate accuracy based on laser shots fired and hits
-function calculateAccuracy(totalShots) {
-  let successfulHits = lasers.filter(laser => !laser.offscreen()).length;
-  return (successfulHits / totalShots) * 100;
-}
+
 
 function keyReleased() {
   if (!gameOver) {

@@ -5,7 +5,7 @@ class Stats {
   }
 
   // Update method to update stats (could be called during the game loop)
-  update(accuracy, score, health) {
+  update( score, health) {
     this.score = score;
     this.health = health;
   }
