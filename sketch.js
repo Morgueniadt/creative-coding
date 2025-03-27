@@ -36,7 +36,7 @@ function draw() {
   for (let i = asteroids.length - 1; i >= 0; i--) {
     if (aircraft.hits(asteroids[i])) {
       stats.health -= 10; // Decrease health if aircraft hits an asteroid
-
+        console.log("asteroid hit, health is now: " + this.stats.health);
       // Add debris when the aircraft hits an asteroid
       for (let k = 0; k < 30; k++) {
         debris.push(
@@ -114,9 +114,11 @@ function draw() {
 function keyReleased() {
   if (keyCode == RIGHT_ARROW || keyCode == LEFT_ARROW) {
     aircraft.setRotation(0); // Stop rotation when no key is pressed
-  }else if (keycode == UP_ARROW)
-    aircraft.boosting(flase); // when the front button is let go the ship halts boosting 
+  } else if (keyCode == UP_ARROW) {
+    aircraft.boosting(false); // Stop boosting when UP key is released
+  }
 }
+
 // Function to restart the game when ENTER is pressed
 function keyPressed() {
   if (key == ' ' && !gameOver) {
