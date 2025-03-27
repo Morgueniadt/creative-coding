@@ -1,13 +1,11 @@
 class Stats {
   constructor() {
     this.health = 100; // Starting health
-    this.accuracy = 0; // Accuracy percentage (0 to 100)
     this.score = 0;    // The score starts at 0
   }
 
   // Update method to update stats (could be called during the game loop)
   update(accuracy, score, health) {
-    this.accuracy = accuracy;
     this.score = score;
     this.health = health;
   }
@@ -21,7 +19,6 @@ class Stats {
 
     // Display health, accuracy, and score
     text("Health: " + this.health, 10, 10);
-    text("Accuracy: " + this.accuracy.toFixed(2) + "%", 10, 30);
     text("Score: " + this.score, 10, 50);
     
 
