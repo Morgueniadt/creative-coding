@@ -1,7 +1,7 @@
 var aircraft;
 var asteroids = [];
 var lasers = [];
-let debris = []
+let debris = [];
 var stats;
 var gameOver = false; // Track if the game is over
 
@@ -26,9 +26,9 @@ function startGame() {
 function draw() {
   background(0);
 
-  // If the game is over, display the Game Over message
+  // If the game is over, stop the game loop and display the Game Over screen
   if (gameOver) {
-    displayGameOver();
+    stats.render(); // This now handles displaying the Game Over screen
     return; // Stop the game loop
   }
 
@@ -46,6 +46,7 @@ function draw() {
 
       if (stats.health <= 0) {
         gameOver = true;
+        stats.gameOverTime = millis() - stats.startTime; // Capture game over time
         noLoop(); // Stop the game loop
         break;
       }
@@ -110,29 +111,12 @@ function draw() {
   stats.update(stats.score, stats.health);
   stats.render();
 }
-
-// Function to display a Game Over message and prompt to try again
-function displayGameOver() {
-  push();
-  fill(255, 0, 0); // Red color for Game Over text
-  textSize(48);
-  textAlign(CENTER, CENTER);
-  text("GAME OVER", width / 2, height / 2 - 50);
-  textSize(24);
-  text("Press ENTER to Try Again", width / 2, height / 2 + 20);
-  pop();
-}
-
-// Function to calculate accuracy based on laser shots fired and hits
-
-
 function keyReleased() {
-  if (!gameOver) {
-    aircraft.setRotation(0);
-    aircraft.boosting(false);
+  if (keyCode == RIGHT_ARROW || keyCode == LEFT_ARROW) {
+    aircraft.setRotation(0); // Stop rotation when no key is pressed
   }
 }
-
+// Function to restart the game when ENTER is pressed
 function keyPressed() {
   if (key == ' ' && !gameOver) {
     lasers.push(new Laser(aircraft.pos, aircraft.heading));
@@ -147,4 +131,3 @@ function keyPressed() {
     loop(); // Restart the game loop
   }
 }
-
