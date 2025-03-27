@@ -125,3 +125,26 @@ function keyPressed() {
     loop(); // Restart the game loop
   }
 }
+function draw() {
+  background(0);
+
+  // Update and render asteroids
+  for (let i = asteroids.length - 1; i >= 0; i--) {
+    asteroids[i].update();
+    asteroids[i].render();
+    asteroids[i].edges();
+
+    if (asteroids[i].isDead()) {
+      asteroids.splice(i, 1); // Remove destroyed asteroids
+    }
+  }
+
+  // Update and render debris
+  for (let i = debris.length - 1; i >= 0; i--) {
+    debris[i].update();
+    debris[i].render();
+    if (debris[i].isDead()) {
+      debris.splice(i, 1);
+    }
+  }
+}
