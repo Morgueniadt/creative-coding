@@ -1,28 +1,35 @@
 class Stats {
   constructor() {
-    this.health = 100; // Starting health
-    this.score = 0;    // The score starts at 0
+    this.score = 0;
+    this.health = 100;
+    this.gameOverTime = 0;
+    this.startTime = 0;
+    this.survivalTime = 0;  // Initialize survivalTime
   }
 
-  // Update method to update stats (could be called during the game loop)
-  update(accuracy, score, health) {
-    this.accuracy = accuracy;
+  // Update method to track time survived
+  update(score, health) {
     this.score = score;
     this.health = health;
+    this.survivalTime = Math.floor((millis() - this.startTime) / 1000); // Update survival time in seconds
   }
 
-  // Display the stats on the screen
+  // Render method to display stats
   render() {
-    push();
     fill(255);
-    textSize(16);
-    textAlign(LEFT, TOP);
-
-    // Display health, accuracy, and score
-    text("Health: " + this.health, 10, 10);
-    text("Score: " + this.score, 10, 50);
+    textSize(24);
+    text("Score: " + this.score, 20, 30);
+    text("Health: " + this.health, 20, 60);
     
+    // Render survival time
+    text("Survival Time: " + this.survivalTime + "s", 20, 90);
 
-    pop();
+    if (this.health <= 0) {
+      textSize(48);
+      textAlign(CENTER, CENTER);
+      text("GAME OVER", width / 2, height / 2);
+      textSize(24);
+      text("Press ENTER to Restart", width / 2, height / 2 + 40);
+    }
   }
 }

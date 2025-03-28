@@ -40,9 +40,18 @@ class AirCraft {
   hits(asteroid) {
     let d = dist(this.pos.x, this.pos.y, asteroid.pos.x, asteroid.pos.y);
     if (d < this.r + asteroid.r) {
-      this.flashRed = true;  // Start flashing red when hit
+      this.flashRed = true; // Start flashing red when hit
+    
+      // Add explosion debris when aircraft is hit
+      for (let i = 0; i < 30; i++) {
+        debris.push(
+          new Debris(this.pos.copy(), p5.Vector.random2D().mult(random(1, 3)))
+        );
+      }
+    
       return true;
     }
+    
     return false;
   }
 
