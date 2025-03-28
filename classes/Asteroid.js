@@ -7,9 +7,9 @@
 class Asteroid {
   constructor(pos, r) {
     if (pos) {
-      this.pos = pos.copy();
+      this.pos = pos.copy(); // Create a copy of the position so we don't modify the original
     } else {
-      this.pos = createVector(random(width), random(height));
+      this.pos = createVector(random(width), random(height)); // Random position for asteroid 
     }
 
     if (r) {
@@ -18,11 +18,11 @@ class Asteroid {
       this.r = random(15, 50);
     }
 
-    this.vel = p5.Vector.random2D();
-    this.total = floor(random(5, 15));
-    this.offset = [];
+    this.vel = p5.Vector.random2D(); // Random velocity vector for asteroid 
+    this.total = floor(random(5, 15)); // Number of vertices for asteroid
+    this.offset = []; 
 
-    for (let i = 0; i < this.total; i++) {
+    for (let i = 0; i < this.total; i++) { // Generate random offsets for asteroid vertices 
       this.offset[i] = random(-this.r * 0.5, this.r * 0.5);
     }
 
