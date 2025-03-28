@@ -15,7 +15,7 @@ class Debris {
     for (let i = this.particles.length - 1; i >= 0; i--) {
       this.particles[i].update();
       if (this.particles[i].isFinished()) {
-        this.particles.splice(i, 1);
+        this.particles.splice(i, 1); // Remove particle if it's finished
       }
     }
   }
