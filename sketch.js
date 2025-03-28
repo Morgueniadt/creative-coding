@@ -137,12 +137,14 @@ for (let i = debris.length - 1; i >= 0; i--) {
 function keyPressed() {
   if (key == ' ' && !gameOver) {
     lasers.push(new Laser(aircraft.pos, aircraft.heading));
+    console.log("laser fired");
   } else if (keyCode == RIGHT_ARROW && !gameOver) {
     aircraft.setRotation(0.1);
   } else if (keyCode == LEFT_ARROW && !gameOver) {
     aircraft.setRotation(-0.1);
   } else if (keyCode == UP_ARROW && !gameOver) {
     aircraft.boosting(true);
+    console.log("boosting");
   } else if (keyCode === ENTER && gameOver) {
     startGame(); // Restart the game when ENTER is pressed
     loop(); // Restart the game loop
