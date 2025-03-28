@@ -7,7 +7,7 @@ class Laser {
   constructor(spos, angle) {
     this.pos = createVector(spos.x, spos.y);
     this.vel = p5.Vector.fromAngle(angle);
-    this.vel.mult(10);
+    this.vel.mult(30);
   }
 
   update() {
@@ -22,22 +22,19 @@ class Laser {
     pop();
   }
 
+  // Check if laser hits asteroid
   hits(asteroid) {
     let d = dist(this.pos.x, this.pos.y, asteroid.pos.x, asteroid.pos.y);
-    if (d < asteroid.r) {
-      return true;
-    } else {
-      return false;
-    }
+    return d < asteroid.r;
+  }
+
+  // Check if laser hits debris
+  hitsDebris(debris) {
+    let d = dist(this.pos.x, this.pos.y, debris.pos.x, debris.pos.y);
+    return d < 5; // Assuming debris is small, adjust if needed
   }
 
   offscreen() {
-    if (this.pos.x > width || this.pos.x < 0) {
-      return true;
-    }
-    if (this.pos.y > height || this.pos.y < 0) {
-      return true;
-    }
-    return false;
+    return (this.pos.x > width || this.pos.x < 0 || this.pos.y > height || this.pos.y < 0);
   }
 }

@@ -7,7 +7,7 @@ class Stats {
   }
 
   // Update method to track time survived
-  update(score, health, ) {	
+  update(score, health ) {	
     this.score = score;  
     this.health = health;
     this.survivalTime = Math.floor((millis() - this.startTime) / 1000); // Calculate survival time in seconds
@@ -29,7 +29,7 @@ class Stats {
       textSize(24);
       text("Score: " + this.score, width / 2, height / 2 + 30);
       text("Survival Time: " + this.survivalTime + "s", width / 2, height / 2 + 60);
-      text("Press ENTER to Restart", width / 2, height / 2 + 100);
+      text("Press ENTER to Restart", width / 2, height / 2 + 90);
       
     }
   }

@@ -2,12 +2,13 @@ class Particle {
     constructor(pos) {
       this.pos = pos.copy(); // Create a copy of the position so we don't modify the original
       this.vel = p5.Vector.random2D().mult(random(0.1, 2)); // Random velocity vector with magnitude between 1 and 3
-      this.lifetime = 255; 
+      this.lifetime = 25; 
     }
   
     update() {
       this.pos.add(this.vel); // Update position based on velocity vector 
       this.lifetime -= 5;
+      console.log(this.lifetime) ;
     }
   
     render() {

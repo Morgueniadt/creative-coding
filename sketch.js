@@ -4,6 +4,10 @@ var lasers = [];
 let debris = [];
 var stats;
 var gameOver = false; // Track if the game is over
+let asteroidSpawnRate = 3000; // Spawn a new asteroid every 3 seconds
+let lastAsteroidTime = 0;
+let maxAsteroids = 5; // Prevent infinite asteroid spam
+
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -30,108 +34,112 @@ function startGame() {
 function draw() {
   background(0);
 
-  // If the game is over, stop the game loop and display the Game Over screen
   if (gameOver) {
-    stats.render(); // This now handles displaying the Game Over screen
-    return; // Stop the game loop
+    stats.render();
+    return;
   }
 
-  // Loop through all asteroids and check for collisions with the aircraft
+  // 🔹 Spawn new asteroids over time (capped at maxAsteroids)
+  if (millis() - lastAsteroidTime > asteroidSpawnRate && asteroids.length < maxAsteroids) {
+    asteroids.push(new Asteroid());
+    lastAsteroidTime = millis(); // Reset spawn timer
+  }
+
+  // 🔹 Loop through asteroids (only once)
   for (let i = asteroids.length - 1; i >= 0; i--) {
     if (aircraft.hits(asteroids[i])) {
-      stats.health -= 10; // Decrease health if aircraft hits an asteroid
-      console.log("asteroid hit, health is now: " + stats.health);
+      stats.health -= 10;
+      console.log("Asteroid hit! Health: " + stats.health);
 
-      // Add debris when the aircraft hits an asteroid
+      // Create debris when aircraft collides
       for (let k = 0; k < 30; k++) {
-        debris.push(
-          new Debris(asteroids[i].pos.copy(), p5.Vector.random2D().mult(random(1, 3)))
-        );
+        debris.push(new Debris(asteroids[i].pos.copy(), p5.Vector.random2D().mult(random(1, 3))));
       }
 
       if (stats.health <= 0) {
         gameOver = true;
-        stats.gameOverTime = millis() - stats.startTime; // Capture game over time
-        noLoop(); // Stop the game loop
+        stats.gameOverTime = millis() - stats.startTime;
+        noLoop();
         break;
       }
 
-      // Break the asteroid into smaller pieces
       let newAsteroids = asteroids[i].breakup();
       asteroids.splice(i, 1, ...newAsteroids);
     }
 
-    // Update and render each asteroid
-// Loop through all asteroids
-for (let i = asteroids.length - 1; i >= 0; i--) {
-  if (asteroids[i]) { // Ensure asteroid exists
-    asteroids[i].update(); // Safe to call update()
-    asteroids[i].render();
-    asteroids[i].edges();
-  }
-}
-
-// Loop through all lasers
-for (let i = lasers.length - 1; i >= 0; i--) {
-  if (lasers[i]) { // Ensure laser exists
-    lasers[i].update(); // Safe to call update()
-    lasers[i].render();
-  }
-}
-
-// Loop through all debris
-for (let i = debris.length - 1; i >= 0; i--) {
-  if (debris[i]) { // Ensure debris exists
-    debris[i].update(); // Safe to call update()
-    debris[i].render();
-  }
-}
+    if (asteroids[i]) {
+      asteroids[i].update();
+      asteroids[i].render();
+      asteroids[i].edges();
+    }
   }
 
-  // Loop through all lasers
+  // 🔹 Loop through lasers
   for (let i = lasers.length - 1; i >= 0; i--) {
-    if (lasers[i]) { // Check if laser exists
-      lasers[i].render();
+    if (lasers[i]) {
       lasers[i].update();
+      lasers[i].render();
 
-      // Remove laser if it goes offscreen
       if (lasers[i].offscreen()) {
         lasers.splice(i, 1);
-      } else {
-        // Check if laser hits an asteroid
-        for (let j = asteroids.length - 1; j >= 0; j--) {
-          if (lasers[i].hits(asteroids[j])) {
-            // Add debris when laser hits an asteroid
-            for (let k = 0; k < 20; k++) {
-              debris.push(
-                new Debris(asteroids[j].pos.copy(), p5.Vector.random2D().mult(random(1, 3)))
-              );
-            }
+        continue;
+      }
 
-            if (asteroids[j].r > 10) {
-              let newAsteroids = asteroids[j].breakup();
-              asteroids = asteroids.concat(newAsteroids);
-            }
-            asteroids.splice(j, 1);
-            lasers.splice(i, 1);
-            stats.score += 10;
-            break;
+      // 🔹 Check if laser hits an asteroid
+      for (let j = asteroids.length - 1; j >= 0; j--) {
+        if (lasers[i] && lasers[i].hits(asteroids[j])) {
+          // Create debris
+          for (let k = 0; k < 20; k++) {
+            debris.push(new Debris(asteroids[j].pos.copy(), p5.Vector.random2D().mult(random(1, 3))));
           }
+
+          if (asteroids[j].r > 10) {
+            let newAsteroids = asteroids[j].breakup();
+            asteroids = asteroids.concat(newAsteroids);
+          }
+
+          asteroids.splice(j, 1);
+          asteroids.push(new Asteroid()); // Replace asteroid
+          lasers.splice(i, 1);
+          stats.score += 10;
+          break;
+        }
+      }
+
+      // 🔹 Check if laser hits debris
+      for (let d = debris.length - 1; d >= 0; d--) {
+        if (lasers[i] && lasers[i].hitsDebris(debris[d])) {
+          debris.splice(d, 1);
+          lasers.splice(i, 1);
+          break;
         }
       }
     }
   }
 
-  // Render and update the aircraft
+  // 🔹 Loop through debris
+  for (let i = debris.length - 1; i >= 0; i--) {
+    if (debris[i]) {
+      debris[i].update();
+      debris[i].render();
+      if (debris[i].isDead()) {
+        debris.splice(i, 1);
+      }
+    }
+  }
+
+  // 🔹 Render & update aircraft
   aircraft.render();
   aircraft.turn();
   aircraft.update();
   aircraft.edges();
 
-  // Update stats with the current values
-  stats.update(stats.score, stats.health);
+  // 🔹 Update & render stats
+  stats.update(stats.score, stats.health, stats.survivalTime);
   stats.render();
 }
+
+
 
 // Function to restart the game when ENTER is pressed
 function keyPressed() {
