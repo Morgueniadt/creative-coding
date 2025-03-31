@@ -1,15 +1,9 @@
-// Daniel Shiffman
-// http://codingtra.in
-// http://patreon.com/codingtrain
-// Code for: https://youtu.be/hacZU523FyM
-
-
 class Asteroid {
   constructor(pos, r) {
     if (pos) {
-      this.pos = pos.copy(); // Create a copy of the position so we don't modify the original
+      this.pos = pos.copy();
     } else {
-      this.pos = createVector(random(width), random(height)); // Random position for asteroid 
+      this.pos = createVector(random(width), random(height));
     }
 
     if (r) {
@@ -18,21 +12,20 @@ class Asteroid {
       this.r = random(15, 50);
     }
 
-    this.vel = p5.Vector.random2D(); // Random velocity vector for asteroid 
-    this.total = floor(random(5, 15)); // Number of vertices for asteroid
-    this.offset = []; 
+    this.vel = p5.Vector.random2D();
+    this.total = floor(random(5, 15));
+    this.offset = [];
 
-    for (let i = 0; i < this.total; i++) { // Generate random offsets for asteroid vertices 
+    for (let i = 0; i < this.total; i++) {
       this.offset[i] = random(-this.r * 0.5, this.r * 0.5);
     }
 
-    this.particles = []; // Store particles
+    this.particles = [];
   }
 
   update() {
     this.pos.add(this.vel);
 
-    // Update particles
     for (let i = this.particles.length - 1; i >= 0; i--) {
       this.particles[i].update();
       if (this.particles[i].isFinished()) {
@@ -47,7 +40,6 @@ class Asteroid {
     noFill();
     translate(this.pos.x, this.pos.y);
 
-    // Draw asteroid shape
     beginShape();
     for (let i = 0; i < this.total; i++) {
       let angle = map(i, 0, this.total, 0, TWO_PI);
@@ -59,7 +51,6 @@ class Asteroid {
     endShape(CLOSE);
     pop();
 
-    // Render particles
     for (let particle of this.particles) {
       particle.render();
     }
@@ -71,14 +62,19 @@ class Asteroid {
       newA[0] = new Asteroid(this.pos, this.r);
       newA[1] = new Asteroid(this.pos, this.r);
     }
-
-    // Generate particles when asteroid breaks
-    for (let i = 0; i < 30; i++) {
+  
+    // Add health pack drop
+    if (random(1) < 0.1) { // 10% chance to drop a health pack
+      healthPacks.push(new HealthPack(this.pos, this.r, this.vel)); // Pass velocity along with position and size
+    }
+  
+    for (let i = 0; i < this.total; i++) {
       this.particles.push(new Particle(this.pos.copy(), true));
     }
-
+  
     return newA;
   }
+  
 
   edges() {
     if (this.pos.x > width + this.r) {
@@ -94,4 +90,3 @@ class Asteroid {
     }
   }
 }
-

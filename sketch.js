@@ -2,7 +2,10 @@ var aircraft;
 var asteroids = [];
 var lasers = [];
 let debris = [];
+let healthPacks = [];
+
 var stats;
+
 var gameOver = false; // Track if the game is over
 let asteroidSpawnRate = 3000; // Spawn a new asteroid every 3 seconds
 let lastAsteroidTime = 0;
@@ -39,13 +42,13 @@ function draw() {
     return;
   }
 
-  // 🔹 Spawn new asteroids over time (capped at maxAsteroids)
+  // Spawn new asteroids over time (capped at maxAsteroids)
   if (millis() - lastAsteroidTime > asteroidSpawnRate && asteroids.length < maxAsteroids) {
     asteroids.push(new Asteroid());
     lastAsteroidTime = millis(); // Reset spawn timer
   }
 
-  // 🔹 Loop through asteroids (only once)
+  // Loop through asteroids (only once)
   for (let i = asteroids.length - 1; i >= 0; i--) {
     if (aircraft.hits(asteroids[i])) {
       stats.health -= 10;
@@ -74,7 +77,7 @@ function draw() {
     }
   }
 
-  // 🔹 Loop through lasers
+  // Loop through lasers
   for (let i = lasers.length - 1; i >= 0; i--) {
     if (lasers[i]) {
       lasers[i].update();
@@ -85,7 +88,7 @@ function draw() {
         continue;
       }
 
-      // 🔹 Check if laser hits an asteroid
+      // Check if laser hits an asteroid
       for (let j = asteroids.length - 1; j >= 0; j--) {
         if (lasers[i] && lasers[i].hits(asteroids[j])) {
           // Create debris
@@ -106,7 +109,7 @@ function draw() {
         }
       }
 
-      // 🔹 Check if laser hits debris
+      // Check if laser hits debris
       for (let d = debris.length - 1; d >= 0; d--) {
         if (lasers[i] && lasers[i].hitsDebris(debris[d])) {
           debris.splice(d, 1);
@@ -117,7 +120,7 @@ function draw() {
     }
   }
 
-  // 🔹 Loop through debris
+  // Loop through debris
   for (let i = debris.length - 1; i >= 0; i--) {
     if (debris[i]) {
       debris[i].update();
@@ -128,13 +131,24 @@ function draw() {
     }
   }
 
-  // 🔹 Render & update aircraft
+  // Update and render health packs
+  for (let healthPack of healthPacks) {
+    healthPack.update();
+    healthPack.render();
+
+    // Check if the aircraft collects the health pack
+    if (healthPack.checkCollision(aircraft)) {
+      stats.health = min(stats.health + 20, 100); // Increase health, max is 100
+    }
+  }
+
+  // Render & update aircraft
   aircraft.render();
   aircraft.turn();
   aircraft.update();
   aircraft.edges();
 
-  // 🔹 Update & render stats
+  // Update & render stats
   stats.update(stats.score, stats.health, stats.survivalTime);
   stats.render();
 }
@@ -164,5 +178,14 @@ function keyReleased() {
     aircraft.setRotation(0); // Stop rotation when no key is pressed
   } else if (keyCode == UP_ARROW) {
     aircraft.boosting(false); // Stop boosting when UP key is released
+  } else if ( keyCode == ''){
+    air
+  }
+  
+}
+function mousePressed() {
+  if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
+    let fs = fullscreen();
+    fullscreen(!fs);
   }
 }

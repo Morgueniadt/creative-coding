@@ -6,8 +6,11 @@ class AirCraft {
     this.rotation = 0;
     this.vel = createVector(0, 0);
     this.isBoosting = false;
-    this.flashRed = false;  // New variable to handle flash effect
-    this.flashTimer = 0;  // Timer to control flashing
+    this.flashRed = false;
+    this.flashGreen = false; // New variable to track the green flash
+    this.flashTimer = 0;
+    this.greenFlashTimer = 0; // Timer for green flash
+    this.health = 100;  // Add health to the aircraft
   }
 
   boosting(b) {
@@ -20,13 +23,32 @@ class AirCraft {
     }
     this.pos.add(this.vel);
     this.vel.mult(0.99);
-    
+
     // Handle flashing red effect when hitting an asteroid
     if (this.flashRed) {
       this.flashTimer++;
       if (this.flashTimer > 10) {
-        this.flashRed = false;  // Stop flashing after a short time
+        this.flashRed = false;
         this.flashTimer = 0;
+      }
+    }
+
+    // Handle flashing green effect when collecting a health pack
+    if (this.flashGreen) {
+      this.greenFlashTimer++;
+      if (this.greenFlashTimer > 30) { // Flash green for a short time (30 frames)
+        this.flashGreen = false;
+        this.greenFlashTimer = 0;
+      }
+    }
+
+    // Check for health pack collisions
+    for (let i = healthPacks.length - 1; i >= 0; i--) {
+      if (healthPacks[i].checkCollision(this)) {
+        this.regainHealth(10); // Regain 10 health when picking up a health pack
+        healthPacks.splice(i, 1); // Remove the health pack after it is collected
+        console.log("Health regained! Current Health: " + this.health); // Log the health regained
+        this.flashGreen = true; // Trigger the green flash
       }
     }
   }
@@ -37,21 +59,26 @@ class AirCraft {
     this.vel.add(force);
   }
 
+  // Method to regain health
+  regainHealth(amount) {
+    this.health = min(this.health + amount, 100); // Max health is 100
+  }
+
   hits(asteroid) {
     let d = dist(this.pos.x, this.pos.y, asteroid.pos.x, asteroid.pos.y);
     if (d < this.r + asteroid.r) {
       this.flashRed = true; // Start flashing red when hit
-    
+
       // Add explosion debris when aircraft is hit
       for (let i = 0; i < 30; i++) {
         debris.push(
           new Debris(this.pos.copy(), p5.Vector.random2D().mult(random(1, 3)))
         );
       }
-    
+
       return true;
     }
-    
+
     return false;
   }
 
@@ -62,13 +89,16 @@ class AirCraft {
 
     // If flashing red, set the color to red
     if (this.flashRed) {
-      fill(255, 0, 0);
+      fill(255, 0, 0);  // Red flashing effect
+      stroke(255);
+    } else if (this.flashGreen) {  // If flashing green, set the color to green
+      fill(0, 255, 0);  // Green flashing effect
       stroke(255);
     } else {
       fill(0);
       stroke(255);
     }
-    
+
     // Draw the aircraft as a triangle
     triangle(-this.r, this.r, this.r, this.r, 0, -this.r);
 
