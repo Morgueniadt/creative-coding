@@ -37,7 +37,7 @@ class Stats {
   reset() {
     this.startTime = millis();  // Reset the startTime to current time
     this.survivalTime = 0;  // Reset survival time to 0
-    this.health = 100;  // Reset health to 100 (or any desired value)
+    this.health = 100;  // Reset health to 100
     this.score = 0;  // Reset score to 0
   }
 }

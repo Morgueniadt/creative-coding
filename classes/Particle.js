@@ -1,3 +1,4 @@
+//Tutorial used for particles https://youtu.be/QlpadcXok8U
 class Particle {
     constructor(pos) {
       this.pos = pos.copy(); // Create a copy of the position so we don't modify the original

@@ -1,27 +1,24 @@
 var aircraft;
 var asteroids = [];
-var lasers = [];
 let debris = [];
-let healthPacks = [];
-
 var stats;
-
-var gameOver = false; // Track if the game is over
+var gameOver = false;
+let asteroidGenerationPaused = false;
 let asteroidSpawnRate = 3000; // Spawn a new asteroid every 3 seconds
 let lastAsteroidTime = 0;
 let maxAsteroids = 5; // Prevent infinite asteroid spam
 
-
+// Setup the game environment
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  startGame(); // Start the game
+  startGame();
 }
 
+// Function to start the game
 function startGame() {
   aircraft = new AirCraft(); // Reset aircraft
   stats = new Stats(); // Create a new Stats instance
   asteroids = []; // Clear existing asteroids
-  lasers = []; // Clear lasers
   debris = []; // Clear debris
   gameOver = false; // Reset the game-over flag
   stats.score = 0; // Reset score
@@ -33,7 +30,7 @@ function startGame() {
   }
 }
 
-
+// Main game loop
 function draw() {
   background(0);
 
@@ -48,7 +45,7 @@ function draw() {
     lastAsteroidTime = millis(); // Reset spawn timer
   }
 
-  // Loop through asteroids (only once)
+  // Loop through asteroids
   for (let i = asteroids.length - 1; i >= 0; i--) {
     if (aircraft.hits(asteroids[i])) {
       stats.health -= 10;
@@ -56,7 +53,7 @@ function draw() {
 
       // Create debris when aircraft collides
       for (let k = 0; k < 30; k++) {
-        debris.push(new Debris(asteroids[i].pos.copy(), p5.Vector.random2D().mult(random(1, 3))));
+        debris.push(new Debris(asteroids[i].pos.copy(), p5.Vector.random2D().mult(random(1, 3)))); // Generate debris
       }
 
       if (stats.health <= 0) {
@@ -77,48 +74,9 @@ function draw() {
     }
   }
 
-  // Loop through lasers
-  for (let i = lasers.length - 1; i >= 0; i--) {
-    if (lasers[i]) {
-      lasers[i].update();
-      lasers[i].render();
-
-      if (lasers[i].offscreen()) {
-        lasers.splice(i, 1);
-        continue;
-      }
-
-      // Check if laser hits an asteroid
-      for (let j = asteroids.length - 1; j >= 0; j--) {
-        if (lasers[i] && lasers[i].hits(asteroids[j])) {
-          // Create debris
-          for (let k = 0; k < 20; k++) {
-            debris.push(new Debris(asteroids[j].pos.copy(), p5.Vector.random2D().mult(random(1, 3))));
-          }
-
-          if (asteroids[j].r > 10) {
-            let newAsteroids = asteroids[j].breakup();
-            asteroids = asteroids.concat(newAsteroids);
-          }
-
-          asteroids.splice(j, 1);
-          asteroids.push(new Asteroid()); // Replace asteroid
-          lasers.splice(i, 1);
-          stats.score += 10;
-          break;
-        }
-      }
-
-      // Check if laser hits debris
-      for (let d = debris.length - 1; d >= 0; d--) {
-        if (lasers[i] && lasers[i].hitsDebris(debris[d])) {
-          debris.splice(d, 1);
-          lasers.splice(i, 1);
-          break;
-        }
-      }
-    }
-  }
+  // Update & render stats
+  stats.update(stats.score, stats.health);  
+  stats.render();
 
   // Loop through debris
   for (let i = debris.length - 1; i >= 0; i--) {
@@ -131,36 +89,16 @@ function draw() {
     }
   }
 
-  // Update and render health packs
-  for (let healthPack of healthPacks) {
-    healthPack.update();
-    healthPack.render();
-
-    // Check if the aircraft collects the health pack
-    if (healthPack.checkCollision(aircraft)) {
-      stats.health = min(stats.health + 20, 100); // Increase health, max is 100
-    }
-  }
-
   // Render & update aircraft
   aircraft.render();
   aircraft.turn();
   aircraft.update();
   aircraft.edges();
-
-  // Update & render stats
-  stats.update(stats.score, stats.health, stats.survivalTime);
-  stats.render();
 }
-
-
 
 // Function to restart the game when ENTER is pressed
 function keyPressed() {
-  if (key == ' ' && !gameOver) {
-    lasers.push(new Laser(aircraft.pos, aircraft.heading));
-    console.log("laser fired");
-  } else if (keyCode == RIGHT_ARROW && !gameOver) {
+  if (keyCode == RIGHT_ARROW && !gameOver) {
     aircraft.setRotation(0.1);
   } else if (keyCode == LEFT_ARROW && !gameOver) {
     aircraft.setRotation(-0.1);
@@ -178,14 +116,5 @@ function keyReleased() {
     aircraft.setRotation(0); // Stop rotation when no key is pressed
   } else if (keyCode == UP_ARROW) {
     aircraft.boosting(false); // Stop boosting when UP key is released
-  } else if ( keyCode == ''){
-    air
-  }
-  
-}
-function mousePressed() {
-  if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
-    let fs = fullscreen();
-    fullscreen(!fs);
   }
 }

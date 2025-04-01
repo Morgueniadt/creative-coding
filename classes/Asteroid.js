@@ -3,19 +3,36 @@ class Asteroid {
     if (pos) {
       this.pos = pos.copy();
     } else {
-      this.pos = createVector(random(width), random(height));
+      // Generate asteroid at random edge of the screen
+      let edge = floor(random(4)); // 0 = top, 1 = right, 2 = bottom, 3 = left
+      if (edge === 0) {
+        // Top edge
+        this.pos = createVector(random(width), 0);
+      } else if (edge === 1) {
+        // Right edge
+        this.pos = createVector(width, random(height));
+      } else if (edge === 2) {
+        // Bottom edge
+        this.pos = createVector(random(width), height);
+      } else {
+        // Left edge
+        this.pos = createVector(0, random(height));
+      }
     }
 
+    // Set the radius of the asteroid
     if (r) {
       this.r = r * 0.5;
     } else {
       this.r = random(15, 50);
     }
 
+    // Random velocity
     this.vel = p5.Vector.random2D();
     this.total = floor(random(5, 15));
     this.offset = [];
 
+    // Generate offsets for asteroid shape
     for (let i = 0; i < this.total; i++) {
       this.offset[i] = random(-this.r * 0.5, this.r * 0.5);
     }
@@ -26,6 +43,7 @@ class Asteroid {
   update() {
     this.pos.add(this.vel);
 
+    // Update particles
     for (let i = this.particles.length - 1; i >= 0; i--) {
       this.particles[i].update();
       if (this.particles[i].isFinished()) {
@@ -51,6 +69,7 @@ class Asteroid {
     endShape(CLOSE);
     pop();
 
+    // Render particles
     for (let particle of this.particles) {
       particle.render();
     }
@@ -62,19 +81,11 @@ class Asteroid {
       newA[0] = new Asteroid(this.pos, this.r);
       newA[1] = new Asteroid(this.pos, this.r);
     }
-  
-    // Add health pack drop
-    if (random(1) < 0.1) { // 10% chance to drop a health pack
-      healthPacks.push(new HealthPack(this.pos, this.r, this.vel)); // Pass velocity along with position and size
-    }
-  
     for (let i = 0; i < this.total; i++) {
       this.particles.push(new Particle(this.pos.copy(), true));
     }
-  
     return newA;
   }
-  
 
   edges() {
     if (this.pos.x > width + this.r) {
