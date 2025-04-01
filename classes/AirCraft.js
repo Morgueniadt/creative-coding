@@ -46,7 +46,7 @@ class AirCraft {
     return false;
   }
 
-  render() {
+  renderAirCraft() {
     push();
     translate(this.pos.x, this.pos.y);
     rotate(this.heading + PI / 2);

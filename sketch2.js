@@ -7,7 +7,7 @@ function setup() {
     starFieldWidth: windowWidth,
     starFieldHeight: windowHeight,
     starFieldPosX: windowWidth / 2,
-    starFieldPosY: windowHeight / 2
+    starFieldPosY: windowHeight / 2,
   });
 
   // Set up the game

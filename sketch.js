@@ -1,10 +1,12 @@
 var aircraft;
 var asteroids = [];
+var lasers = [];
 let debris = [];
+let healthPacks = [];
+let megaLaser;
 var stats;
 var gameOver = false;
-let asteroidGenerationPaused = false;
-let asteroidSpawnRate = 3000; // Spawn a new asteroid every 3 seconds
+let asteroidSpawnRate = 10000; // Spawn a new asteroid every 3 seconds
 let lastAsteroidTime = 0;
 let maxAsteroids = 5; // Prevent infinite asteroid spam
 
@@ -14,11 +16,12 @@ function setup() {
   startGame();
 }
 
-// Function to start the game
+
 function startGame() {
   aircraft = new AirCraft(); // Reset aircraft
   stats = new Stats(); // Create a new Stats instance
   asteroids = []; // Clear existing asteroids
+  lasers = []; // Clear lasers
   debris = []; // Clear debris
   gameOver = false; // Reset the game-over flag
   stats.score = 0; // Reset score
@@ -29,6 +32,7 @@ function startGame() {
     asteroids.push(new Asteroid());
   }
 }
+
 
 // Main game loop
 function draw() {
@@ -56,6 +60,7 @@ function draw() {
         debris.push(new Debris(asteroids[i].pos.copy(), p5.Vector.random2D().mult(random(1, 3)))); // Generate debris
       }
 
+
       if (stats.health <= 0) {
         gameOver = true;
         stats.gameOverTime = millis() - stats.startTime;
@@ -65,6 +70,7 @@ function draw() {
 
       let newAsteroids = asteroids[i].breakup();
       asteroids.splice(i, 1, ...newAsteroids);
+      //splice removes one element from the array of asteroids and then the spread operatoris then used in the new array called newAsteroids which then handle the array of smaller asteroids and then brings them into the array of asteroids so they then follow the logic of asteroids
     }
 
     if (asteroids[i]) {
@@ -74,9 +80,40 @@ function draw() {
     }
   }
 
-  // Update & render stats
-  stats.update(stats.score, stats.health);  
-  stats.render();
+
+  // Loop through lasers
+  for (let i = lasers.length - 1; i >= 0; i--) {
+    if (lasers[i]) {
+      lasers[i].update();
+      lasers[i].render();
+
+      if (lasers[i].offscreen()) {
+        lasers.splice(i, 1);
+        continue;
+      }
+
+      // Check if laser hits an asteroid
+      for (let j = asteroids.length - 1; j >= 0; j--) {
+        if (lasers[i] && lasers[i].hits(asteroids[j])) {
+          // Create debris
+          for (let k = 0; k < 20; k++) {
+            debris.push(new Debris(asteroids[j].pos.copy(), p5.Vector.random2D().mult(random(1, 3)))); // Generate debris
+          }
+
+          if (asteroids[j].r > 10) {
+            let newAsteroids = asteroids[j].breakup();
+            asteroids = asteroids.concat(newAsteroids); // Split asteroid
+          }
+
+          asteroids.splice(j, 1); // Remove asteroid
+          asteroids.push(new Asteroid()); // Replace asteroid
+          lasers.splice(i, 1); // Remove laser
+          stats.score += 10;
+          break;
+        }
+      }
+    }
+  }
 
   // Loop through debris
   for (let i = debris.length - 1; i >= 0; i--) {
@@ -94,22 +131,37 @@ function draw() {
   aircraft.turn();
   aircraft.update();
   aircraft.edges();
+
+  // Update & render stats
+  stats.update(stats.score, stats.health, megaLaser);
+  stats.render();
 }
+
+
 
 // Function to restart the game when ENTER is pressed
 function keyPressed() {
-  if (keyCode == RIGHT_ARROW && !gameOver) {
+  if (keyCode == 70 && !gameOver) {
+    lasers.push(new Laser(aircraft.pos, aircraft.heading));
+    console.log("laser fired");
+  } else if (keyCode == RIGHT_ARROW && !gameOver) {
     aircraft.setRotation(0.1);
   } else if (keyCode == LEFT_ARROW && !gameOver) {
     aircraft.setRotation(-0.1);
   } else if (keyCode == UP_ARROW && !gameOver) {
     aircraft.boosting(true);
     console.log("boosting");
-  } else if (keyCode === ENTER && gameOver) {
+  } else if (key === 'm' && !megaLaser.isActive && megaLaser.canFire()) {
+    megaLaser = new MegaLaser(aircraft.pos, aircraft.heading); // Fire MegaLaser
+    megaLaser.lastFiredTime = millis(); // Set last fired time
+    megaLaser.isActive = true;
+  }
+   else if (keyCode === ENTER && gameOver) {
     startGame(); // Restart the game when ENTER is pressed
     loop(); // Restart the game loop
   }
 }
+
 
 function keyReleased() {
   if (keyCode == RIGHT_ARROW || keyCode == LEFT_ARROW) {
