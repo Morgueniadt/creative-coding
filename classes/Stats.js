@@ -1,8 +1,8 @@
 class Stats {
-  constructor() {
+  constructor(obj={}) {
     this.score = 0;
-    this.health = 100;
-    this.startTime = millis();  // Initialize startTime to the current time
+    this.health = obj.health ?? 100;
+    this.startTime = millis();  // Ini tialize startTime to the current time
     this.survivalTime = 0;  // Initialize survivalTime
     this.transparency = 0;  // Initialize transparency for fade effect
     this.fade = false; // Whether fade effect is on or off https://editor.p5js.org/xinxin/sketches/dqotLWlKU fade tutorial
