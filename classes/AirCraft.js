@@ -6,8 +6,8 @@ class AirCraft {
     this.rotation = 0;
     this.vel = createVector(0, 0);
     this.isBoosting = false;
-    this.flashRed = false;
-    this.flashTimer = 0;
+    this.flashRed = false;  // New variable to handle flash effect
+    this.flashTimer = 0;  // Timer to control flashing
   }
 
   boosting(b) {
@@ -20,6 +20,15 @@ class AirCraft {
     }
     this.pos.add(this.vel);
     this.vel.mult(0.99);
+    
+    // Handle flashing red effect when hitting an asteroid
+    if (this.flashRed) {
+      this.flashTimer++;
+      if (this.flashTimer > 10) {
+        this.flashRed = false;  // Stop flashing after a short time
+        this.flashTimer = 0;
+      }
+    }
   }
 
   boost() {
@@ -32,40 +41,41 @@ class AirCraft {
     let d = dist(this.pos.x, this.pos.y, asteroid.pos.x, asteroid.pos.y);
     if (d < this.r + asteroid.r) {
       this.flashRed = true; // Start flashing red when hit
-
+    
       // Add explosion debris when aircraft is hit
       for (let i = 0; i < 30; i++) {
         debris.push(
           new Debris(this.pos.copy(), p5.Vector.random2D().mult(random(1, 3)))
         );
       }
-
+    
       return true;
     }
-
+    
     return false;
   }
 
-  renderAirCraft() {
+  render() {
     push();
     translate(this.pos.x, this.pos.y);
     rotate(this.heading + PI / 2);
 
+    // If flashing red, set the color to red
     if (this.flashRed) {
-      fill(255, 0, 0);  // Red flashing effect
-      stroke(255);
+      fill(0);
+      stroke(255 ,0 ,0);
     } else {
       fill(0);
       stroke(255);
     }
-
+    
     // Draw the aircraft as a triangle
     triangle(-this.r, this.r, this.r, this.r, 0, -this.r);
 
     // Draw red line at the bottom if boosting
     if (this.isBoosting) {
       stroke(255, 0, 0);  // Red color for the line
-      line(-this.r, this.r, this.r, this.r);  // Line at the bottom of the triangle
+      line(-this.r, this.r*1.5, this.r, this.r*1.5);  // Line at the bottom of the triangle
     }
     pop();
   }

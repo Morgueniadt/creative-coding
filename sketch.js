@@ -133,15 +133,19 @@ function draw() {
   aircraft.edges();
 
   // Update & render stats
-  stats.update(stats.score, stats.health, megaLaser);
+  stats.update(stats.score, stats.health);
   stats.render();
-}
 
+  if (keyIsDown(70) && !gameOver) {
+    lasers.push(new Laser(aircraft.pos, aircraft.heading));
+    console.log("rapid fire");
+}
+}
 
 
 // Function to restart the game when ENTER is pressed
 function keyPressed() {
-  if (keyCode == 70 && !gameOver) {
+  if (key == ' ' && !gameOver) {
     lasers.push(new Laser(aircraft.pos, aircraft.heading));
     console.log("laser fired");
   } else if (keyCode == RIGHT_ARROW && !gameOver) {
@@ -151,12 +155,7 @@ function keyPressed() {
   } else if (keyCode == UP_ARROW && !gameOver) {
     aircraft.boosting(true);
     console.log("boosting");
-  } else if (key === 'm' && !megaLaser.isActive && megaLaser.canFire()) {
-    megaLaser = new MegaLaser(aircraft.pos, aircraft.heading); // Fire MegaLaser
-    megaLaser.lastFiredTime = millis(); // Set last fired time
-    megaLaser.isActive = true;
-  }
-   else if (keyCode === ENTER && gameOver) {
+  } else if (keyCode === ENTER && gameOver) {
     startGame(); // Restart the game when ENTER is pressed
     loop(); // Restart the game loop
   }

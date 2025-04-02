@@ -20,6 +20,8 @@ class Stats {
     text("Score: " + this.score, 20, 30);
     text("Health: " + this.health, 20, 60);
     text("Survival Time: " + this.survivalTime + "s", 20, 90);
+    text("hold f for rapid fire ", 20, 120);
+    text("press space for single fire",20, 150);
 
     if (this.health <= 0) {
       textSize(48);
