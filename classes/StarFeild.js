@@ -4,18 +4,15 @@ class Starfield {
         this.starFieldHeight = obj.starFieldHeight ?? windowHeight;
         this.starFieldPosX = obj.starFieldPosX ?? windowWidth / 2;
         this.starFieldPosY = obj.starFieldPosY ?? windowHeight / 2;
-        this.aircraft = []; // Array to hold multiple aircraft
-        this.lasers = [];
-        this.debris = [];
-        this.asteroids = [];
-        this.stats = new Stats();
-        this.gameOver = false;
-        this.asteroidSpawnRate = 10000;
-        this.lastAsteroidTime = 0;
-        this.maxAsteroids = 5;
-        this.asteroidGenerationPaused = false;
+       this.generateAirCraft();
     }
 
+    renderStarfield(){
+        push()
+        translate(this.starFieldPosX,this.starFieldPosY)
+        fill(0)
+        rect(0,0,this.starFieldWidth, this.starFieldHeight)
+    }
     setup() {
         this.startGame();
     }

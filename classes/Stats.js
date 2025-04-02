@@ -1,6 +1,6 @@
 class Stats {
-  constructor(obj={}) {
-    this.score = 0;
+  constructor(obj) {
+    this.score = obj.score ?? 0;
     this.health = obj.health ?? 100;
     this.startTime = millis();  // Ini tialize startTime to the current time
     this.survivalTime = 0;  // Initialize survivalTime

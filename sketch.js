@@ -9,54 +9,39 @@ var gameOver = false;
 let asteroidSpawnRate = 10000; // Spawn a new asteroid every 3 seconds
 let lastAsteroidTime = 0;
 let maxAsteroids = 5; // Prevent infinite asteroid spam
-let healthSlider;
-let isGameStarted = false;
 
 // Setup the game environment
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  // Create a health slider before starting the game
-  healthSlider = createSlider(50, 200, 100, 1); // Min value 50, max value 200, default 100
-  healthSlider.position(20, 100);
-  healthSlider.style('width', '200px');
-  
-  // Create a button to start the game
-  let startButton = createButton('Start Game');
-  startButton.position(20, 140);
-  startButton.mousePressed(startGame);
+  startGame();
 }
 
-// Start the game
+
 function startGame() {
-  // Set game to started
-  isGameStarted = true;
-  
-  // Get the health value from the slider
-  let selectedHealth = healthSlider.value();
-  
-  // Initialize stats with the chosen health value
-  stats = new Stats({ health: selectedHealth });
   aircraft = new AirCraft(); // Reset aircraft
-  
-  // Reset game state
+  stats.push(new Stats({
+    score:0, // Reset score
+    health:200 // Reset health
+  })); // Create a new Stats instance
   asteroids = []; // Clear existing asteroids
   lasers = []; // Clear lasers
   debris = []; // Clear debris
   gameOver = false; // Reset the game-over flag
-  stats.score = 0; // Reset score
+
 
   // Add initial asteroids
-  for (var i = 0; i < 5; i++) {
+  for (var i = 0; i <= 5; i++) {
     asteroids.push(new Asteroid());
   }
 }
+
 
 // Main game loop
 function draw() {
   background(0);
 
   if (gameOver) {
-    stats.render();
+    stats[0].render();
     return;
   }
 
@@ -77,6 +62,7 @@ function draw() {
         debris.push(new Debris(asteroids[i].pos.copy(), p5.Vector.random2D().mult(random(1, 3)))); // Generate debris
       }
 
+
       if (stats.health <= 0) {
         gameOver = true;
         stats.gameOverTime = millis() - stats.startTime;
@@ -86,6 +72,7 @@ function draw() {
 
       let newAsteroids = asteroids[i].breakup();
       asteroids.splice(i, 1, ...newAsteroids);
+      //splice removes one element from the array of asteroids and then the spread operatoris then used in the new array called newAsteroids which then handle the array of smaller asteroids and then brings them into the array of asteroids so they then follow the logic of asteroids
     }
 
     if (asteroids[i]) {
@@ -94,6 +81,7 @@ function draw() {
       asteroids[i].edges();
     }
   }
+
 
   // Loop through lasers
   for (let i = lasers.length - 1; i >= 0; i--) {
@@ -147,20 +135,21 @@ function draw() {
   aircraft.edges();
 
   // Update & render stats
-  stats.update(stats.score, stats.health);
-  stats.render();
+  stats[0].update(stats.score, stats.health);
+  stats[0].render();
 
   if (keyIsDown(70) && !gameOver) {
     lasers.push(new Laser(aircraft.pos, aircraft.heading));
     console.log("rapid fire");
-  }
 }
+}
+
 
 // Function to restart the game when ENTER is pressed
 function keyPressed() {
   if (key == ' ' && !gameOver) {
     lasers.push(new Laser(aircraft.pos, aircraft.heading));
-    console.log("laser fired");
+    console.log("laser fire");
   } else if (keyCode == RIGHT_ARROW && !gameOver) {
     aircraft.setRotation(0.1);
   } else if (keyCode == LEFT_ARROW && !gameOver) {
@@ -173,6 +162,7 @@ function keyPressed() {
     loop(); // Restart the game loop
   }
 }
+
 
 function keyReleased() {
   if (keyCode == RIGHT_ARROW || keyCode == LEFT_ARROW) {
