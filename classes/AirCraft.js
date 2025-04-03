@@ -1,10 +1,10 @@
 class AirCraft {
-  constructor() {
-    this.pos = createVector(width / 2, height / 2);
-    this.r = 20;
-    this.heading = 0;
-    this.rotation = 0;
-    this.vel = createVector(0, 0);
+  constructor(obj = {}) {
+    this.pos = obj.pos || createVector(width / 2, height / 2);
+    this.r = obj.r || 20;
+    this.heading = obj.heading || 0;
+    this.rotation = obj.rotation || 0;
+    this.vel = obj.vel || createVector(0, 0);
     this.isBoosting = false;
     this.flashRed = false;
     this.flashTimer = 0;
@@ -31,9 +31,8 @@ class AirCraft {
   hits(asteroid) {
     let d = dist(this.pos.x, this.pos.y, asteroid.pos.x, asteroid.pos.y);
     if (d < this.r + asteroid.r) {
-      this.flashRed = true; // Start flashing red when hit
+      this.flashRed = true;
 
-      // Add explosion debris when aircraft is hit
       for (let i = 0; i < 30; i++) {
         debris.push(
           new Debris(this.pos.copy(), p5.Vector.random2D().mult(random(1, 3)))
@@ -42,7 +41,6 @@ class AirCraft {
 
       return true;
     }
-
     return false;
   }
 
@@ -52,20 +50,18 @@ class AirCraft {
     rotate(this.heading + PI / 2);
 
     if (this.flashRed) {
-      fill(255, 0, 0);  // Red flashing effect
+      fill(255, 0, 0);
       stroke(255);
     } else {
       fill(0);
       stroke(255);
     }
 
-    // Draw the aircraft as a triangle
     triangle(-this.r, this.r, this.r, this.r, 0, -this.r);
 
-    // Draw red line at the bottom if boosting
     if (this.isBoosting) {
-      stroke(255, 0, 0);  // Red color for the line
-      line(-this.r, this.r, this.r, this.r);  // Line at the bottom of the triangle
+      stroke(255, 0, 0);
+      line(-this.r, this.r, this.r, this.r);
     }
     pop();
   }

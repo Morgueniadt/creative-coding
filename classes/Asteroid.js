@@ -1,43 +1,18 @@
 class Asteroid {
-  constructor(pos, r) {
-    if (pos) {
-      this.pos = pos.copy();
-    } else {
-      // Generate asteroid at random edge of the screen
-      let edge = floor(random(4)); // 0 = top, 1 = right, 2 = bottom, 3 = left
-      if (edge === 0) {
-        // Top edge
-        this.pos = createVector(random(width), 0);
-      } else if (edge === 1) {
-        // Right edge
-        this.pos = createVector(width, random(height));
-      } else if (edge === 2) {
-        // Bottom edge
-        this.pos = createVector(random(width), height);
-      } else {
-        // Left edge
-        this.pos = createVector(0, random(height));
-      }
-    }
-
-    // Set the radius of the asteroid
-    if (r) {
-      this.r = r * 0.5;
-    } else {
-      this.r = random(15, 50);
-    }
-
-    // Random velocity
-    this.vel = p5.Vector.random2D();
-    this.total = floor(random(5, 15));
-    this.offset = [];
+  constructor(obj = {}) {
+    // Default properties if not provided in obj
+    this.pos = obj.pos || createVector(random(width), random(height));  // Position of the asteroid
+    this.r = obj.r || random(15, 50);  // Radius of the asteroid
+    this.vel = obj.vel || p5.Vector.random2D();  // Velocity of the asteroid
+    this.total = obj.total || floor(random(5, 15));  // Number of points to make asteroid shape
+    this.offset = [];  // Array for shape variation
 
     // Generate offsets for asteroid shape
     for (let i = 0; i < this.total; i++) {
       this.offset[i] = random(-this.r * 0.5, this.r * 0.5);
     }
 
-    this.particles = [];
+    this.particles = [];  // Particles for explosion
   }
 
   update() {
@@ -78,12 +53,15 @@ class Asteroid {
   breakup() {
     let newA = [];
     if (this.r > 10) {
-      newA[0] = new Asteroid(this.pos, this.r);
-      newA[1] = new Asteroid(this.pos, this.r);
+      newA[0] = new Asteroid({ pos: this.pos, r: this.r });
+      newA[1] = new Asteroid({ pos: this.pos, r: this.r });
     }
+
+    // Add explosion particles
     for (let i = 0; i < this.total; i++) {
       this.particles.push(new Particle(this.pos.copy(), true));
     }
+
     return newA;
   }
 
