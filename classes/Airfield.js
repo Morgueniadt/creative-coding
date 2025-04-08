@@ -12,9 +12,14 @@ class Airfield {
         this.particles = [];
         this.alertCount = 0;
         this.score = 0;
-
+        this.health = 100;
+        this.stats = new Stats({
+            score: this.score,
+            health: this.health
+        });
         this.generateAirCraft();
         this.generateAsteroids();
+
     }
  // Method to render lasers
  renderLasers() {
@@ -122,6 +127,26 @@ class Airfield {
     generateDebris(position, velocity) {
         let debris = new Debris(position, velocity);
         this.debris.push(debris);
+    }
+    updateAirfield() {
+        this.airCrafts.forEach(airCraft => {
+            this.checkLimit(airCraft);
+            airCraft.update();  // Update each aircraft
+        });
+
+        // Update the stats
+        this.stats.update(this.score, this.health);  // Update with current score and health
+    }
+
+    // Render the stats
+    renderStats() {
+        this.stats.render();  // Render the stats on screen
+    }
+
+    // Method to handle key events or health changes
+    updateScoreAndHealth(score, health) {
+        this.score = score;
+        this.health = health;
     }
     checkDist() {
         this.airCrafts.forEach(airCraft => airCraft.alert = 0);
