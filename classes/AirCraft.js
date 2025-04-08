@@ -36,7 +36,10 @@ class AirCraft {
     force.mult(0.1);
     this.vel.add(force);
   }
-
+  fireLaser() {
+    let laser = new Laser(this.pos, this.heading); // Assuming laser fires in the direction the aircraft is heading
+    airfield.lasers.push(laser); // Push the laser into the airfield's lasers array
+}
   hits(asteroid) {
     let d = dist(this.pos.x, this.pos.y, asteroid.pos.x, asteroid.pos.y);
     if (d < this.r + asteroid.r) {

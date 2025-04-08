@@ -15,7 +15,39 @@ class Airfield {
         this.generateAirCraft();
         this.generateAsteroids();
     }
+ // Method to render lasers
+ renderLasers() {
+    for (let i = this.lasers.length - 1; i >= 0; i--) {
+        let laser = this.lasers[i];
+        laser.update();
+        laser.render();
 
+        // Check if laser hits any asteroid or debris
+        for (let asteroid of this.asteroids) {
+            if (laser.hits(asteroid)) {
+                // Handle the laser hitting the asteroid (e.g., break the asteroid, remove the laser)
+                asteroid.breakup();
+                this.asteroids.splice(this.asteroids.indexOf(asteroid), 1);
+                this.lasers.splice(i, 1);
+                break;
+            }
+        }
+
+        for (let debris of this.debris) {
+            if (laser.hitsDebris(debris)) {
+                // Handle the laser hitting debris (e.g., remove the debris)
+                this.debris.splice(this.debris.indexOf(debris), 1);
+                this.lasers.splice(i, 1);
+                break;
+            }
+        }
+
+        // Remove laser if it goes offscreen
+        if (laser.offscreen()) {
+            this.lasers.splice(i, 1);
+        }
+    }
+}
     renderAirfield() {
         push();
         translate(this.airFieldPosX, this.airFieldPosY);
@@ -124,27 +156,5 @@ class Airfield {
         this.lasers.push(laser);
     }
 
-    renderLasers() {
-        for (let i = this.lasers.length - 1; i >= 0; i--) {
-            let laser = this.lasers[i];
-            laser.move();
-            laser.render();
-
-            for (let j = this.airCrafts.length - 1; j >= 0; j--) {
-                let aircraft = this.airCrafts[j];
-                let dist = sqrt(sq(laser.pos.x - aircraft.pos.x) + sq(laser.pos.y - aircraft.pos.y));
-
-                if (dist < aircraft.size / 2) {
-                    if (aircraft instanceof Asteroid) {
-                        aircraft.breakApart();
-                        this.score++;
-                    }
-
-                    this.airCrafts.splice(j, 1);
-                    this.lasers.splice(i, 1);
-                    break;
-                }
-            }
-        }
-    }
+   
 }
