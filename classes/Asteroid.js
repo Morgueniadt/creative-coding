@@ -6,17 +6,13 @@ class Asteroid {
       // Generate asteroid at random edge of the screen
       let edge = floor(random(4)); // 0 = top, 1 = right, 2 = bottom, 3 = left
       if (edge === 0) {
-        // Top edge
-        this.pos = createVector(random(width), 0);
+        this.pos = createVector(random(width), 0); // Top edge
       } else if (edge === 1) {
-        // Right edge
-        this.pos = createVector(width, random(height));
+        this.pos = createVector(width, random(height)); // Right edge
       } else if (edge === 2) {
-        // Bottom edge
-        this.pos = createVector(random(width), height);
+        this.pos = createVector(random(width), height); // Bottom edge
       } else {
-        // Left edge
-        this.pos = createVector(0, random(height));
+        this.pos = createVector(0, random(height)); // Left edge
       }
     }
 
@@ -24,20 +20,20 @@ class Asteroid {
     if (r) {
       this.r = r * 0.5;
     } else {
-      this.r = random(15, 50);
+      this.r = random(15, 50); // Random size of the asteroid
     }
 
     // Random velocity
     this.vel = p5.Vector.random2D();
-    this.total = floor(random(5, 15));
+    this.total = floor(random(5, 15)); // Number of points to create an irregular shape
     this.offset = [];
 
-    // Generate offsets for asteroid shape
+    // Generate offsets for asteroid shape (making the asteroid irregular)
     for (let i = 0; i < this.total; i++) {
       this.offset[i] = random(-this.r * 0.5, this.r * 0.5);
     }
 
-    this.particles = [];
+    this.particles = []; // Store particles generated when the asteroid breaks up
   }
 
   update() {
@@ -76,16 +72,18 @@ class Asteroid {
   }
 
   breakup() {
-    let newA = [];
+    let newDebris = [];
     if (this.r > 10) {
-      newA[0] = new Asteroid(this.pos, this.r);
-      newA[1] = new Asteroid(this.pos, this.r);
+      // Create debris (instead of asteroids)
+      newDebris.push(new Debris(this.pos, this.vel.copy().mult(0.5))); // Assign some velocity to debris
+      newDebris.push(new Debris(this.pos, this.vel.copy().mult(0.5))); // Two pieces of debris
     }
-    airfield.generateDebris(this.pos, this.vel);
+
     for (let i = 0; i < this.total; i++) {
-      this.particles.push(new Particle(this.pos.copy(), true));
+      this.particles.push(new Particle(this.pos.copy(), true)); // Add particle effect
     }
-    return newA;
+    
+    return newDebris; // Return debris instead of asteroids
   }
 
   edges() {
