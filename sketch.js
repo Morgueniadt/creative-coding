@@ -50,12 +50,7 @@ function draw() {
     if (aircraft.hits(asteroids[i])) {
       stats.health -= 10;
       console.log("Asteroid hit! Health: " + stats.health);
-
-      // Create debris when aircraft collides
-      for (let k = 0; k < 30; k++) {
-        debris.push(new Debris(asteroids[i].pos.copy(), p5.Vector.random2D().mult(random(1, 3)))); // Generate debris
-      }
-
+      
       if (stats.health <= 0) {
         gameOver = true;
         stats.gameOverTime = millis() - stats.startTime;
@@ -67,7 +62,7 @@ function draw() {
       asteroids.splice(i, 1, ...newAsteroids);  // Split the asteroid into smaller ones
 
       // Update the time when the last asteroid was destroyed
-      lastAsteroidDestroyedTime = millis();
+      lastAsteroidDestroyedTime = millis(); //splice removes one element from the array of asteroids and then the spread operatoris then used in the new array called newAsteroids which then handle the array of smaller asteroids and then brings them into the array of asteroids so they then follow the logic of asteroids
     }
 
     if (asteroids[i]) {
