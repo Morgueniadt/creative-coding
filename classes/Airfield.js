@@ -1,17 +1,19 @@
 class Airfield {
     constructor(obj) {
-        this.numAirCraft = obj.numAirCraft ?? 10;
         this.airFieldWidth = obj.airFieldWidth ?? 500;
         this.airFieldHeight = obj.airFieldHeight ?? 500;
         this.airFieldPosX = obj.airFieldPosX ?? 250;
         this.airFieldPosY = obj.airFieldPosY ?? 250;
+        this.numAsteroids = obj.numAsteroids ?? 5;
         this.airCrafts = [];
         this.lasers = [];
-        this.lives = 3;
+        this.asteroids = [];
+        this.debris = [];
         this.alertCount = 0;
         this.score = 0;
 
         this.generateAirCraft();
+        this.generateAsteroids();
     }
 
     renderAirfield() {
@@ -26,12 +28,26 @@ class Airfield {
         push();
         translate(this.airFieldPosX, this.airFieldPosY);
         fill(0, 255, 255);
-        this.airCrafts.forEach((airCraft, id) => {
-            airCraft.renderAirCraft(id);
+        this.airCrafts.forEach((airCraft ) => {
+            airCraft.render();
         });
         pop();
     }
+    renderDebris() {
+        push();
+        translate(this.airFieldPosX, this.airFieldPosY);
+        // Iterate through the debris array and render each piece of debris
+        for (let i = this.debris.length - 1; i >= 0; i--) {
+            let debris = this.debris[i];
+            debris.update();
+            debris.render();
 
+            if (debris.isDead()) {
+                this.debris.splice(i, 1);  // Remove dead debris
+            }
+        }
+        pop();
+    }
     moveAirCraft() {
         this.airCrafts.forEach(airCraft => {
             this.checkLimit(airCraft);
@@ -40,14 +56,12 @@ class Airfield {
     }
 
     generateAsteroids() {
-        for (let i = 0; i < this.numAirCraft; i++) {
-            this.airCrafts.push(new Asteroid({
-                posx: random(0, this.airFieldWidth),
-                posy: random(0, this.airFieldHeight),
-                size: random(30, 60),
-                speed: random(1, 3),
-                angle: random(0, 360)
-            }));
+        for (let i = 0; i < this.numAsteroids; i++) {
+            let asteroid = new Asteroid({
+                pos: createVector(random(this.airFieldWidth), random(this.airFieldHeight)),
+                r: random(15, 50) // Random radius for each asteroid
+            });
+            this.asteroids.push(asteroid); // Add each asteroid to the asteroids array
         }
     }
 
@@ -56,13 +70,14 @@ class Airfield {
             this.airCrafts.push(new AirCraft({
                 posx: random(0, this.airFieldWidth),
                 posy: random(0, this.airFieldHeight),
-                size: random(30, 60),
-                speed: random(1, 3),
-                angle: random(0, 360)
+
             }));
         }
     }
-
+    generateDebris(position, velocity) {
+        let debris = new Debris(position, velocity);
+        this.debris.push(debris);
+    }
     checkDist() {
         this.airCrafts.forEach(airCraft => airCraft.alert = 0);
         let alertTriggered = false;

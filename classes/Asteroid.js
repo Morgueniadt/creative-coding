@@ -81,6 +81,7 @@ class Asteroid {
       newA[0] = new Asteroid(this.pos, this.r);
       newA[1] = new Asteroid(this.pos, this.r);
     }
+    airfield.generateDebris(this.pos, this.vel);
     for (let i = 0; i < this.total; i++) {
       this.particles.push(new Particle(this.pos.copy(), true));
     }

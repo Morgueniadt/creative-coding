@@ -1,7 +1,7 @@
 class AirCraft {
-  constructor() {
-    this.pos = createVector(width / 2, height / 2);
-    this.r = 20;
+  constructor(obj) {
+    this.pos = createVector(obj?.posx || width / 2, obj?.posy || height / 2);    this.r = 20;
+    this.r = obj?.size || 20;
     this.heading = 0;
     this.rotation = 0;
     this.vel = createVector(0, 0);
@@ -42,12 +42,7 @@ class AirCraft {
     if (d < this.r + asteroid.r) {
       this.flashRed = true; // Start flashing red when hit
     
-      // Add explosion debris when aircraft is hit
-      for (let i = 0; i < 30; i++) {
-        debris.push(
-          new Debris(this.pos.copy(), p5.Vector.random2D().mult(random(1, 3)))
-        );
-      }
+      
     
       return true;
     }
