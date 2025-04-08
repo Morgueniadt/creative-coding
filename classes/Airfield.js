@@ -9,6 +9,7 @@ class Airfield {
         this.lasers = [];
         this.asteroids = [];
         this.debris = [];
+        this.particles = [];
         this.alertCount = 0;
         this.score = 0;
 
@@ -80,6 +81,18 @@ class Airfield {
         }
         pop();
     }
+    renderParticles() {
+        for (let i = this.particles.length - 1; i >= 0; i--) {
+            let particle = this.particles[i];
+            particle.update();
+            particle.render();
+
+            // Remove particle if it is finished (lifetime <= 0)
+            if (particle.isFinished()) {
+                this.particles.splice(i, 1);
+            }
+        }
+    }
     moveAirCraft() {
         this.airCrafts.forEach(airCraft => {
             this.checkLimit(airCraft);
@@ -132,7 +145,11 @@ class Airfield {
             this.alertCount++;
         }
     }
-
+    generateParticles(position) {
+        for (let i = 0; i < 10; i++) {  // Generate 10 particles
+            this.particles.push(new Particle(position));  // Add a new particle at the specified position
+        }
+    }
     checkLimit(airCraft) {
         if (airCraft.pos.x > this.airFieldWidth) {
             airCraft.pos.x = 0;
