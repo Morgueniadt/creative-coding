@@ -117,7 +117,7 @@ function draw() {
       if (debris[i].isDead()) {
         debris.splice(i, 1);
       }
-    }
+    }//goes through all the debris pieces backwards, updates and renders each one, and removes any debris that has finished its effect (is "dead"). Looping backward helps safely remove items without messing up the loop.
   }
 
   // Render & update aircraft

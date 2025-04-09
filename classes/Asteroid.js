@@ -74,29 +74,16 @@ class Asteroid {
   breakup() {
     let newDebris = [];
     if (this.r > 10) {
-<<<<<<< HEAD
-      newA[0] = new Asteroid({ pos: this.pos, r: this.r });
-      newA[1] = new Asteroid({ pos: this.pos, r: this.r });
-    }
-
-    // Add explosion particles
-=======
       // Create debris (instead of asteroids)
       newDebris.push(new Debris(this.pos, this.vel.copy().mult(0.5))); // Assign some velocity to debris
       newDebris.push(new Debris(this.pos, this.vel.copy().mult(0.5))); // Two pieces of debris
     }
 
->>>>>>> 25e849f1708d516d04ec22b60d879c4755065568
     for (let i = 0; i < this.total; i++) {
       this.particles.push(new Particle(this.pos.copy(), true)); // Add particle effect
     }
-<<<<<<< HEAD
-
-    return newA;
-=======
     
     return newDebris; // Return debris instead of asteroids
->>>>>>> 25e849f1708d516d04ec22b60d879c4755065568
   }
 
   edges() {

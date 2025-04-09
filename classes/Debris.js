@@ -16,13 +16,13 @@ class Debris extends Asteroid {
     for (let i = this.particles.length - 1; i >= 0; i--) {
       this.particles[i].update();
       if (this.particles[i].isFinished()) { 
-        this.particles.splice(i, 1);  // Remove finished particles
+        this.particles.splice(i, 1);           
       }
     }
   }
 
   render() {
-    fill(255, this.lifetime);  // Set fill color with fading lifetime
+    fill(255, this.lifetime);
     noStroke();
     ellipse(this.pos.x, this.pos.y, 5, 5); // Small debris pieces
 
@@ -33,7 +33,7 @@ class Debris extends Asteroid {
   }
 
   isDead() {
-    return this.lifetime <= 0;  // Check if the debris is no longer alive
+    return this.lifetime <= 0;
   }
 
   // Create particles when debris is created
