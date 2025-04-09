@@ -1,18 +1,39 @@
 class Asteroid {
-  constructor(obj = {}) {
-    // Default properties if not provided in obj
-    this.pos = obj.pos || createVector(random(width), random(height));  // Position of the asteroid
-    this.r = obj.r || random(15, 50);  // Radius of the asteroid
-    this.vel = obj.vel || p5.Vector.random2D();  // Velocity of the asteroid
-    this.total = obj.total || floor(random(5, 15));  // Number of points to make asteroid shape
-    this.offset = [];  // Array for shape variation
+  constructor(pos, r) {
+    if (pos) {
+      this.pos = pos.copy();
+    } else {
+      // Generate asteroid at random edge of the screen
+      let edge = floor(random(4)); // 0 = top, 1 = right, 2 = bottom, 3 = left
+      if (edge === 0) {
+        this.pos = createVector(random(width), 0); // Top edge
+      } else if (edge === 1) {
+        this.pos = createVector(width, random(height)); // Right edge
+      } else if (edge === 2) {
+        this.pos = createVector(random(width), height); // Bottom edge
+      } else {
+        this.pos = createVector(0, random(height)); // Left edge
+      }
+    }
 
-    // Generate offsets for asteroid shape
+    // Set the radius of the asteroid
+    if (r) {
+      this.r = r * 0.5;
+    } else {
+      this.r = random(15, 50); // Random size of the asteroid
+    }
+
+    // Random velocity
+    this.vel = p5.Vector.random2D();
+    this.total = floor(random(5, 15)); // Number of points to create an irregular shape
+    this.offset = [];
+
+    // Generate offsets for asteroid shape (making the asteroid irregular)
     for (let i = 0; i < this.total; i++) {
       this.offset[i] = random(-this.r * 0.5, this.r * 0.5);
     }
 
-    this.particles = [];  // Particles for explosion
+    this.particles = []; // Store particles generated when the asteroid breaks up
   }
 
   update() {
@@ -51,18 +72,31 @@ class Asteroid {
   }
 
   breakup() {
-    let newA = [];
+    let newDebris = [];
     if (this.r > 10) {
+<<<<<<< HEAD
       newA[0] = new Asteroid({ pos: this.pos, r: this.r });
       newA[1] = new Asteroid({ pos: this.pos, r: this.r });
     }
 
     // Add explosion particles
-    for (let i = 0; i < this.total; i++) {
-      this.particles.push(new Particle(this.pos.copy(), true));
+=======
+      // Create debris (instead of asteroids)
+      newDebris.push(new Debris(this.pos, this.vel.copy().mult(0.5))); // Assign some velocity to debris
+      newDebris.push(new Debris(this.pos, this.vel.copy().mult(0.5))); // Two pieces of debris
     }
 
+>>>>>>> 25e849f1708d516d04ec22b60d879c4755065568
+    for (let i = 0; i < this.total; i++) {
+      this.particles.push(new Particle(this.pos.copy(), true)); // Add particle effect
+    }
+<<<<<<< HEAD
+
     return newA;
+=======
+    
+    return newDebris; // Return debris instead of asteroids
+>>>>>>> 25e849f1708d516d04ec22b60d879c4755065568
   }
 
   edges() {

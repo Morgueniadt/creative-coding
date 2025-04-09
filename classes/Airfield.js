@@ -1,19 +1,59 @@
 class Airfield {
     constructor(obj) {
-        this.numAirCraft = obj.numAirCraft ?? 10;
         this.airFieldWidth = obj.airFieldWidth ?? 500;
         this.airFieldHeight = obj.airFieldHeight ?? 500;
         this.airFieldPosX = obj.airFieldPosX ?? 250;
         this.airFieldPosY = obj.airFieldPosY ?? 250;
+        this.numAsteroids = obj.numAsteroids ?? 5;
         this.airCrafts = [];
         this.lasers = [];
-        this.lives = 3;
+        this.asteroids = [];
+        this.debris = [];
+        this.particles = [];
         this.alertCount = 0;
         this.score = 0;
-
+        this.health = 100;
+        this.stats = new Stats({
+            score: this.score,
+            health: this.health
+        });
         this.generateAirCraft();
-    }
+        this.generateAsteroids();
 
+    }
+ // Method to render lasers
+ renderLasers() {
+    for (let i = this.lasers.length - 1; i >= 0; i--) {
+        let laser = this.lasers[i];
+        laser.update();
+        laser.render();
+
+        // Check if laser hits any asteroid or debris
+        for (let asteroid of this.asteroids) {
+            if (laser.hits(asteroid)) {
+                // Handle the laser hitting the asteroid (e.g., break the asteroid, remove the laser)
+                asteroid.breakup();
+                this.asteroids.splice(this.asteroids.indexOf(asteroid), 1);
+                this.lasers.splice(i, 1);
+                break;
+            }
+        }
+
+        for (let debris of this.debris) {
+            if (laser.hitsDebris(debris)) {
+                // Handle the laser hitting debris (e.g., remove the debris)
+                this.debris.splice(this.debris.indexOf(debris), 1);
+                this.lasers.splice(i, 1);
+                break;
+            }
+        }
+
+        // Remove laser if it goes offscreen
+        if (laser.offscreen()) {
+            this.lasers.splice(i, 1);
+        }
+    }
+}
     renderAirfield() {
         push();
         translate(this.airFieldPosX, this.airFieldPosY);
@@ -26,12 +66,38 @@ class Airfield {
         push();
         translate(this.airFieldPosX, this.airFieldPosY);
         fill(0, 255, 255);
-        this.airCrafts.forEach((airCraft, id) => {
-            airCraft.renderAirCraft(id);
+        this.airCrafts.forEach((airCraft ) => {
+            airCraft.render();
         });
         pop();
     }
+    renderDebris() {
+        push();
+        translate(this.airFieldPosX, this.airFieldPosY);
+        // Iterate through the debris array and render each piece of debris
+        for (let i = this.debris.length - 1; i >= 0; i--) {
+            let debris = this.debris[i];
+            debris.update();
+            debris.render();
 
+            if (debris.isDead()) {
+                this.debris.splice(i, 1);  // Remove dead debris
+            }
+        }
+        pop();
+    }
+    renderParticles() {
+        for (let i = this.particles.length - 1; i >= 0; i--) {
+            let particle = this.particles[i];
+            particle.update();
+            particle.render();
+
+            // Remove particle if it is finished (lifetime <= 0)
+            if (particle.isFinished()) {
+                this.particles.splice(i, 1);
+            }
+        }
+    }
     moveAirCraft() {
         this.airCrafts.forEach(airCraft => {
             this.checkLimit(airCraft);
@@ -40,14 +106,12 @@ class Airfield {
     }
 
     generateAsteroids() {
-        for (let i = 0; i < this.numAirCraft; i++) {
-            this.airCrafts.push(new Asteroid({
-                posx: random(0, this.airFieldWidth),
-                posy: random(0, this.airFieldHeight),
-                size: random(30, 60),
-                speed: random(1, 3),
-                angle: random(0, 360)
-            }));
+        for (let i = 0; i < this.numAsteroids; i++) {
+            let asteroid = new Asteroid({
+                pos: createVector(random(this.airFieldWidth), random(this.airFieldHeight)),
+                r: random(15, 50) // Random radius for each asteroid
+            });
+            this.asteroids.push(asteroid); // Add each asteroid to the asteroids array
         }
     }
 
@@ -56,13 +120,34 @@ class Airfield {
             this.airCrafts.push(new AirCraft({
                 posx: random(0, this.airFieldWidth),
                 posy: random(0, this.airFieldHeight),
-                size: random(30, 60),
-                speed: random(1, 3),
-                angle: random(0, 360)
+
             }));
         }
     }
+    generateDebris(position, velocity) {
+        let debris = new Debris(position, velocity);
+        this.debris.push(debris);
+    }
+    updateAirfield() {
+        this.airCrafts.forEach(airCraft => {
+            this.checkLimit(airCraft);
+            airCraft.update();  // Update each aircraft
+        });
 
+        // Update the stats
+        this.stats.update(this.score, this.health);  // Update with current score and health
+    }
+
+    // Render the stats
+    renderStats() {
+        this.stats.render();  // Render the stats on screen
+    }
+
+    // Method to handle key events or health changes
+    updateScoreAndHealth(score, health) {
+        this.score = score;
+        this.health = health;
+    }
     checkDist() {
         this.airCrafts.forEach(airCraft => airCraft.alert = 0);
         let alertTriggered = false;
@@ -85,7 +170,11 @@ class Airfield {
             this.alertCount++;
         }
     }
-
+    generateParticles(position) {
+        for (let i = 0; i < 10; i++) {  // Generate 10 particles
+            this.particles.push(new Particle(position));  // Add a new particle at the specified position
+        }
+    }
     checkLimit(airCraft) {
         if (airCraft.pos.x > this.airFieldWidth) {
             airCraft.pos.x = 0;
@@ -109,27 +198,5 @@ class Airfield {
         this.lasers.push(laser);
     }
 
-    renderLasers() {
-        for (let i = this.lasers.length - 1; i >= 0; i--) {
-            let laser = this.lasers[i];
-            laser.move();
-            laser.render();
-
-            for (let j = this.airCrafts.length - 1; j >= 0; j--) {
-                let aircraft = this.airCrafts[j];
-                let dist = sqrt(sq(laser.pos.x - aircraft.pos.x) + sq(laser.pos.y - aircraft.pos.y));
-
-                if (dist < aircraft.size / 2) {
-                    if (aircraft instanceof Asteroid) {
-                        aircraft.breakApart();
-                        this.score++;
-                    }
-
-                    this.airCrafts.splice(j, 1);
-                    this.lasers.splice(i, 1);
-                    break;
-                }
-            }
-        }
-    }
+   
 }

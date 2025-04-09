@@ -1,11 +1,11 @@
-class Debris {
-  constructor(obj = {}) {
-    // Default properties if not provided in obj
-    this.pos = obj.position || createVector(0, 0);  // Position of debris
-    this.vel = obj.velocity || p5.Vector.random2D();  // Velocity of debris
-    this.lifetime = obj.lifetime || 255;  // Lifetime of debris
-    this.particles = [];  // Array for storing particles created during breakup
-    this.createParticles();  // Create particles immediately upon creation
+class Debris extends Asteroid {
+  constructor(position, velocity) {
+    super(position);  // Inherit from Asteroid class
+    this.vel = velocity; // Set custom velocity for debris
+    this.lifetime = 255;  // Set a lifetime for the debris
+    this.splitCount = 0;  // Debris shouldn't split again, so we track this
+    this.particles = [];  // Create particles on breakup
+    this.createParticles();  // Create particles immediately
   }
 
   update() {
@@ -24,7 +24,7 @@ class Debris {
   render() {
     fill(255, this.lifetime);  // Set fill color with fading lifetime
     noStroke();
-    ellipse(this.pos.x, this.pos.y, 5, 5);  // Render the debris
+    ellipse(this.pos.x, this.pos.y, 5, 5); // Small debris pieces
 
     // Render particles
     for (let particle of this.particles) {
@@ -39,7 +39,7 @@ class Debris {
   // Create particles when debris is created
   createParticles() {
     for (let i = 0; i < 20; i++) {
-      this.particles.push(new Particle(this.pos.copy(), false));
+      this.particles.push(new Particle(this.pos.copy(), false)); // Particle generation
     }
   }
 }
